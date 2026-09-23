@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Mira Wege</string>
+    <string name="overview">Übersicht</string>
+    <string name="catalog">Alle Wege</string>
+    <string name="detail">Wegdetails</string>
+    <string name="create">Neuer Weg</string>
+    <string name="edit">Weg bearbeiten</string>
+    <string name="favorites">Merkliste</string>
+    <string name="planned">Geplant</string>
+    <string name="completed">Abgeschlossen</string>
+    <string name="notes">Notizen</string>
+    <string name="settings">Einstellungen</string>
+    <string name="search_hint">Name oder Ort suchen</string>
+    <string name="only_favorites">Nur gemerkte Wege</string>
+    <string name="refresh">Aktualisieren</string>
+    <string name="retry">Erneut versuchen</string>
+    <string name="empty_list">Keine passenden Wege gefunden.</string>
+    <string name="load_error">Die lokalen Beispieldaten konnten nicht geladen werden.</string>
+    <string name="loading">Wege werden geladen</string>
+    <string name="save">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="delete">Entfernen</string>
+    <string name="confirm_delete">Diesen Weg wirklich entfernen?</string>
+    <string name="route_name">Name</string>
+    <string name="route_area">Ort</string>
+    <string name="route_description">Beschreibung</string>
+    <string name="route_note">Notiz</string>
+    <string name="favorite">Merken</string>
+    <string name="plan">Planen</string>
+    <string name="next_stage">Nächste Etappe abschließen</string>
+    <string name="reset">Beispieldaten zurücksetzen</string>
+    <string name="simulate_error">Ladefehler simulieren</string>
+    <string name="reset_confirm">Alle Änderungen zurücksetzen?</string>
+</resources>

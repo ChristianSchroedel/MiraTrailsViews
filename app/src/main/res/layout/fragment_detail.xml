@@ -1,0 +1,15 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="@dimen/space_large">
+        <TextView android:id="@+id/title" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/PageTitle" />
+        <TextView android:id="@+id/area" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/muted" android:textSize="16sp" android:layout_marginTop="@dimen/space_small" />
+        <TextView android:id="@+id/description" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/BodyText" android:layout_marginTop="@dimen/space_large" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/BodyText" android:textStyle="bold" android:text="Etappen" android:layout_marginTop="@dimen/space_large" />
+        <org.example.miratrail.ui.StageProgressView android:id="@+id/stage_progress" android:layout_width="match_parent" android:layout_height="96dp" android:importantForAccessibility="yes" />
+        <TextView android:id="@+id/stage_caption" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/BodyText" />
+        <TextView android:id="@+id/note" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/BodyText" android:layout_marginTop="@dimen/space_medium" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/next_stage" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/next_stage" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/favorite" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/favorite" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/plan" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/plan" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/edit" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/edit" />
+    </LinearLayout>
+</ScrollView>

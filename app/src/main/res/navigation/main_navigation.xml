@@ -1,0 +1,17 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_navigation" app:startDestination="@id/overviewFragment">
+    <fragment android:id="@+id/overviewFragment" android:name="org.example.miratrail.ui.OverviewFragment" android:label="@string/overview" />
+    <fragment android:id="@+id/catalogFragment" android:name="org.example.miratrail.ui.CatalogFragment" android:label="@string/catalog" />
+    <fragment android:id="@+id/detailFragment" android:name="org.example.miratrail.ui.DetailFragment" android:label="@string/detail">
+        <argument android:name="walkId" app:argType="integer" android:defaultValue="1" />
+    </fragment>
+    <fragment android:id="@+id/createFragment" android:name="org.example.miratrail.ui.CreateFragment" android:label="@string/create" />
+    <fragment android:id="@+id/editFragment" android:name="org.example.miratrail.ui.EditFragment" android:label="@string/edit">
+        <argument android:name="walkId" app:argType="integer" android:defaultValue="1" />
+    </fragment>
+    <fragment android:id="@+id/favoritesFragment" android:name="org.example.miratrail.ui.FavoritesFragment" android:label="@string/favorites" />
+    <fragment android:id="@+id/plannedFragment" android:name="org.example.miratrail.ui.PlannedFragment" android:label="@string/planned" />
+    <fragment android:id="@+id/completedFragment" android:name="org.example.miratrail.ui.CompletedFragment" android:label="@string/completed" />
+    <fragment android:id="@+id/notesFragment" android:name="org.example.miratrail.ui.NotesFragment" android:label="@string/notes" />
+    <fragment android:id="@+id/settingsFragment" android:name="org.example.miratrail.ui.SettingsFragment" android:label="@string/settings" />
+</navigation>
