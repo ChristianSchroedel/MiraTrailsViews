@@ -1,0 +1,15 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="App-Icon 01 &#194;&#183; Sonnenweg">
+<rect width="256" height="256" rx="56" fill="#BDE8F1"/>
+<circle id="Sonne" cx="186" cy="60" r="26" fill="#FFCF65"/>
+<path id="Wolke" d="M34 87C23 87 22 69 35 67C38 48 64 48 69 67C86 66 93 87 76 87H34Z" fill="#FFFAF0"/>
+<path id="Ferne H&#195;&#188;gel" d="M0 158C32 131 59 120 94 137C139 158 166 111 202 130C225 143 248 135 256 129V256H0V158Z" fill="#95C96B"/>
+<path id="Vordere Wiese" d="M0 182C71 133 117 196 160 166C199 139 229 159 256 172V256H0V182Z" fill="#407C55"/>
+<path id="Weg in die Sonne" d="M99 256C80 225 108 202 137 187C178 166 182 159 158 151C141 145 137 137 152 130L162 131C148 140 156 143 174 148C218 160 194 179 164 198C137 216 146 238 166 256H99Z" fill="#FFFAF0"/>
+<path id="Baumstamm" d="M47 193V151" stroke="#123B47" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+<circle id="Baumkrone" cx="47" cy="133" r="24" fill="#188F91"/>
+<circle id="Bl&#195;&#188;te links" cx="34" cy="223" r="5" fill="#FFCF65"/>
+<circle id="Bl&#195;&#188;te rechts" cx="212" cy="206" r="5" fill="#FFCF65"/>
+<circle id="Bl&#195;&#188;te unten" cx="223.5" cy="231.5" r="3.5" fill="#FFFAF0"/>
+</g>
+</svg>

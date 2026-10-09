@@ -1,0 +1,13 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="104dp"
+    android:importantForAccessibility="no"
+    android:contentDescription="@null" >
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:src="@drawable/figma_branch"
+        android:scaleType="fitCenter" />
+</FrameLayout>

@@ -1,24 +1,101 @@
 <resources>
-
-    <style name="Theme.MiraTrail" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/pine</item>
-        <item name="colorPrimaryVariant">@color/pine_dark</item>
+    <style name="Theme.MiraTrail" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/coral</item>
+        <item name="colorPrimaryVariant">@color/pine</item>
         <item name="colorSecondary">@color/coral</item>
-        <item name="colorControlNormal">@android:color/white</item>
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:statusBarColor">@color/pine_dark</item>
+        <item name="colorOnPrimary">@color/surface</item>
+        <item name="colorOnSurface">@color/ink</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="android:colorBackground">@color/cream</item>
+        <item name="colorControlNormal">@color/coral</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/sky</item>
+        <item name="android:navigationBarColor">@color/cream</item>
         <item name="android:windowBackground">@color/cream</item>
+        <item name="materialButtonStyle">@style/SunnyButton</item>
+        <item name="textInputStyle">@style/SunnyInput</item>
+        <item name="checkboxStyle">@style/SunnyCheckbox</item>
     </style>
-
     <style name="PageTitle">
-        <item name="android:textSize">26sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/inter_bold</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/ink</item>
+        <item name="android:includeFontPadding">false</item>
     </style>
-
     <style name="BodyText">
+        <item name="android:fontFamily">sans</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/ink</item>
         <item name="android:lineSpacingExtra">4dp</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="CaptionText" parent="BodyText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">0dp</item>
+    </style>
+    <style name="CardTitle" parent="PageTitle">
+        <item name="android:textSize">17sp</item>
+    </style>
+    <style name="SectionTitle" parent="PageTitle">
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="ToolbarTitle" parent="PageTitle">
+        <item name="android:fontFamily">@font/inter_semibold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="SunnyPage">
+        <item name="android:paddingStart">@dimen/page_gutter</item>
+        <item name="android:paddingEnd">@dimen/page_gutter</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:background">@color/cream</item>
+    </style>
+    <style name="SunnyButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:layout_marginTop">@dimen/space_medium</item>
+        <item name="cornerRadius">@dimen/button_radius</item>
+        <item name="backgroundTint">@color/sunny_primary</item>
+        <item name="android:textColor">@color/surface</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+    </style>
+    <style name="SunnyButton.Secondary">
+        <item name="backgroundTint">@color/surface</item>
+        <item name="android:textColor">@color/ink</item>
+        <item name="strokeColor">@color/button_outline</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+    <style name="SunnyInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/surface</item>
+        <item name="boxStrokeColor">@color/outline</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="hintTextColor">@color/muted</item>
+    </style>
+    <style name="SunnyCheckbox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="buttonTint">@color/coral</item>
+        <item name="android:textColor">@color/ink</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+    <style name="SunnyIllustration">
+        <item name="android:scaleType">centerCrop</item>
+        <item name="shapeAppearanceOverlay">@style/SunnyImageShape</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+    <style name="SunnyImageShape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
     </style>
 </resources>

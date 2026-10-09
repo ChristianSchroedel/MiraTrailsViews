@@ -1,44 +1,59 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:fillViewport="true" >
     <LinearLayout
+        style="@style/SunnyPage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/space_large">
-
+        android:orientation="vertical" >
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             style="@style/PageTitle"
-            android:text="Lokale Daten" />
-
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_heading" />
+        <com.google.android.material.imageview.ShapeableImageView
+            style="@style/SunnyIllustration"
+            android:layout_width="match_parent"
+            android:layout_height="136dp"
+            android:src="@drawable/sunny_settings"
+            android:layout_marginTop="@dimen/space_medium" />
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             style="@style/BodyText"
-            android:layout_marginTop="@dimen/space_medium"
-            android:text="Alle Wege liegen nur während dieser App-Sitzung im Speicher. Beim Neustart erscheinen die ursprünglichen Beispieldaten." />
-
-        <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/simulate_error"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_large"
-            android:text="@string/simulate_error" />
-
-        <TextView
+            android:text="@string/settings_data_description"
+            android:layout_marginTop="16dp"
+            android:padding="18dp"
+            android:background="@drawable/sunny_note" />
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/BodyText"
-            android:text="Der Fehler wird beim nächsten Laden der Wegliste angezeigt. Hier kann er wieder ausgeschaltet werden." />
-
+            android:orientation="vertical"
+            android:layout_marginTop="16dp"
+            android:padding="16dp"
+            android:background="@drawable/sunny_surface" >
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/simulate_error"
+                style="@style/SunnyCheckbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/simulate_error" />
+            <TextView
+                style="@style/BodyText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_error_description"
+                android:layout_marginTop="10dp" />
+        </LinearLayout>
         <com.google.android.material.button.MaterialButton
             android:id="@+id/reset"
+            style="@style/SunnyButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_large"
             android:text="@string/reset" />
+        <include layout="@layout/include_sunny_footer"/>
     </LinearLayout>
 </ScrollView>

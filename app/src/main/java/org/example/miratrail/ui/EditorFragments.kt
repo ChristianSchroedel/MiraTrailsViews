@@ -2,6 +2,7 @@ package org.example.miratrail.ui
 
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -23,6 +24,13 @@ abstract class EditorFragment : Fragment(R.layout.fragment_editor) {
         val input = model.state.value
         view.findViewById<TextView>(R.id.form_title)
             .setText(if (routeId == 0) R.string.create else R.string.edit)
+        view.findViewById<ImageView>(R.id.editor_illustration).apply {
+            setImageResource(if (routeId == 0) R.drawable.sunny_create else R.drawable.sunny_edit)
+            layoutParams = layoutParams.apply {
+                height = ((if (routeId == 0) 120 else 100) *
+                    resources.displayMetrics.density).toInt()
+            }
+        }
         val title = view.findViewById<TextInputEditText>(R.id.title)
         val area = view.findViewById<TextInputEditText>(R.id.area)
         val description = view.findViewById<TextInputEditText>(R.id.description)

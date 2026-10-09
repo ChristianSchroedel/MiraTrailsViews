@@ -1,10 +1,15 @@
 <resources>
-    <color name="pine">#244D45</color>
-    <color name="pine_dark">#173831</color>
-    <color name="sage">#BFD5C3</color>
-    <color name="cream">#FAF8F1</color>
-    <color name="ink">#1D2B28</color>
+    <color name="pine">#123B47</color>
+    <color name="pine_dark">#123B47</color>
+    <color name="sage">#DCECC6</color>
+    <color name="cream">#EAF7FA</color>
+    <color name="ink">#123B47</color>
     <color name="muted">#586A63</color>
-    <color name="outline">#C3D0C7</color>
-    <color name="coral">#A44737</color>
+    <color name="outline">#BBD4D8</color>
+    <color name="coral">#E65F4C</color>
+    <color name="sky">#BDE8F1</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="card_outline">#D1E4E4</color>
+    <color name="button_outline">#C7DBDD</color>
+    <color name="button_disabled">#B8C8CD</color>
 </resources>

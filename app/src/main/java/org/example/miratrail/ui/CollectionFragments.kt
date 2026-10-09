@@ -28,7 +28,7 @@ abstract class CollectionFragment : Fragment(R.layout.fragment_collection) {
         view.findViewById<TextView>(R.id.subheading).text = subtitle
         val empty = view.findViewById<TextView>(R.id.empty)
         empty.text = emptyText
-        val adapter = WalkAdapter(onOpen = {
+        val adapter = WalkAdapter(collectionCards = true, onOpen = {
             findNavController().navigate(
                 R.id.detailFragment,
                 bundleOf("walkId" to it.id)
@@ -45,6 +45,8 @@ abstract class CollectionFragment : Fragment(R.layout.fragment_collection) {
                     val filtered = walks.filter(::accepts)
                     adapter.submitList(filtered)
                     empty.isVisible = filtered.isEmpty()
+                    view.findViewById<View>(R.id.completed_banner).isVisible =
+                        this@CollectionFragment is CompletedFragment && filtered.isNotEmpty()
                 }
             }
         }

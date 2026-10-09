@@ -1,74 +1,178 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
-
+    android:fillViewport="true" >
     <LinearLayout
+        style="@style/SunnyPage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/space_large">
-
+        android:orientation="vertical" >
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             style="@style/PageTitle"
-            android:text="Deine Wege vor der Tür" />
-
-        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/overview_heading" />
+        <TextView
             style="@style/BodyText"
-            android:layout_marginTop="@dimen/space_small"
-            android:text="Plane kleine Spaziergänge, halte Etappen fest und notiere Entdeckungen. Alles bleibt auf diesem Gerät." />
-
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/overview_description"
+            android:layout_marginTop="16dp" />
+        <com.google.android.material.imageview.ShapeableImageView
+            style="@style/SunnyIllustration"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:src="@drawable/sunny_overview"
+            android:layout_marginTop="@dimen/space_medium" />
         <TextView
             android:id="@+id/summary"
+            style="@style/CaptionText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/BodyText"
-            android:layout_marginTop="@dimen/space_large" />
-
+            android:layout_marginTop="16dp"
+            android:background="@drawable/sunny_stat"
+            android:padding="14dp"
+            android:gravity="center" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/open_catalog"
+            style="@style/SunnyButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/catalog" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/open_create"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/create" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/open_favorites"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp" >
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/figma_circle_plus"
+                android:importantForAccessibility="no"
+                android:contentDescription="@null" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/open_create"
+                style="@style/SunnyButton.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/create"
+                android:layout_weight="1"
+                android:layout_marginTop="0dp" />
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/favorites" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/open_planned"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp" >
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/figma_heart"
+                android:importantForAccessibility="no"
+                android:contentDescription="@null" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/open_favorites"
+                style="@style/SunnyButton.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/favorites"
+                android:layout_weight="1"
+                android:layout_marginTop="0dp" />
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/planned" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/open_completed"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp" >
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/figma_calendar"
+                android:importantForAccessibility="no"
+                android:contentDescription="@null" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/open_planned"
+                style="@style/SunnyButton.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/planned"
+                android:layout_weight="1"
+                android:layout_marginTop="0dp" />
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/completed" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/open_notes"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp" >
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/figma_circle_check"
+                android:importantForAccessibility="no"
+                android:contentDescription="@null" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/open_completed"
+                style="@style/SunnyButton.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/completed"
+                android:layout_weight="1"
+                android:layout_marginTop="0dp" />
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/notes" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/open_settings"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp" >
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/figma_notebook"
+                android:importantForAccessibility="no"
+                android:contentDescription="@null" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/open_notes"
+                style="@style/SunnyButton.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/notes"
+                android:layout_weight="1"
+                android:layout_marginTop="0dp" />
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/settings" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp" >
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/figma_settings"
+                android:importantForAccessibility="no"
+                android:contentDescription="@null" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/open_settings"
+                style="@style/SunnyButton.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/settings"
+                android:layout_weight="1"
+                android:layout_marginTop="0dp" />
+        </LinearLayout>
+        <include layout="@layout/include_sunny_footer"/>
     </LinearLayout>
 </ScrollView>

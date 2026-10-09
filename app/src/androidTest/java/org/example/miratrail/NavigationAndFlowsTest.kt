@@ -2,24 +2,26 @@ package org.example.miratrail
 
 import android.os.SystemClock
 import android.view.View
-import androidx.test.ext.junit.rules.ActivityScenarioRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.replaceText
+import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isEnabled
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
-import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
+import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.hamcrest.Matcher
-import androidx.recyclerview.widget.RecyclerView
 import org.hamcrest.Matchers.not
 import org.junit.Rule
 import org.junit.Test
@@ -74,7 +76,7 @@ class NavigationAndFlowsTest {
             R.id.open_settings to R.id.simulate_error
         )
         destinations.forEach { (button, evidence) ->
-            onView(withId(button)).perform(click())
+            onView(withId(button)).perform(scrollTo(), click())
             onView(withId(evidence)).check(matches(isDisplayed()))
             pressBack()
         }
@@ -84,19 +86,20 @@ class NavigationAndFlowsTest {
     fun catalogOpensDetailsAndEditor() {
         openLoadedCatalog()
         openWalk(0)
-        onView(withId(R.id.stage_progress)).check(matches(isDisplayed()))
-        onView(withId(R.id.edit)).perform(click())
+        onView(withId(R.id.stage_progress)).perform(scrollTo()).check(matches(isDisplayed()))
+        onView(withId(R.id.edit)).perform(scrollTo(), click())
         onView(withId(R.id.title)).check(matches(withText("Am kleinen Fluss")))
     }
 
     @Test
     fun validationIsVisibleAndValidWalkCanBeSaved() {
         onView(withId(R.id.open_create)).perform(click())
-        onView(withId(R.id.save)).perform(click())
+        onView(withId(R.id.save)).perform(scrollTo(), click())
+        onView(withId(R.id.title_layout)).perform(scrollTo())
         onView(withText("Bitte einen Namen eingeben.")).check(matches(isDisplayed()))
-        onView(withId(R.id.title)).perform(replaceText("Neue Runde"))
-        onView(withId(R.id.area)).perform(replaceText("Südpark"))
-        onView(withId(R.id.save)).perform(click())
+        onView(withId(R.id.title)).perform(scrollTo(), replaceText("Neue Runde"), closeSoftKeyboard())
+        onView(withId(R.id.area)).perform(scrollTo(), replaceText("Südpark"), closeSoftKeyboard())
+        onView(withId(R.id.save)).perform(closeSoftKeyboard(), scrollTo(), click())
         onView(withText("Neue Runde")).check(matches(isDisplayed()))
     }
 
@@ -104,7 +107,7 @@ class NavigationAndFlowsTest {
     fun completedWalkDisablesNextStage() {
         openLoadedCatalog()
         openWalk(3)
-        onView(withId(R.id.next_stage)).check(matches(not(isEnabled())))
+        onView(withId(R.id.next_stage)).perform(scrollTo()).check(matches(not(isEnabled())))
     }
 
     @Test
@@ -118,7 +121,7 @@ class NavigationAndFlowsTest {
     fun stageViewHasAccessibleSummary() {
         openLoadedCatalog()
         openWalk(0)
-        onView(withId(R.id.stage_progress)).check(matches(isDisplayed()))
+        onView(withId(R.id.stage_progress)).perform(scrollTo()).check(matches(isDisplayed()))
         onView(withId(R.id.stage_progress)).check(
             matches(
                 androidx.test.espresso.matcher.ViewMatchers.withContentDescription(

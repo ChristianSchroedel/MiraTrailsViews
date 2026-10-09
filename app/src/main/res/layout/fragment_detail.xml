@@ -1,83 +1,96 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:fillViewport="true" >
     <LinearLayout
+        style="@style/SunnyPage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/space_large">
-
+        android:orientation="vertical" >
         <TextView
             android:id="@+id/title"
+            style="@style/PageTitle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/PageTitle" />
-
+            android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/area"
+            style="@style/CaptionText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/muted"
-            android:textSize="16sp"
-            android:layout_marginTop="@dimen/space_small" />
-
+            android:layout_marginTop="16dp" />
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/detail_illustration"
+            style="@style/SunnyIllustration"
+            android:layout_width="match_parent"
+            android:layout_height="176dp"
+            android:src="@drawable/sunny_detail"
+            android:layout_marginTop="@dimen/space_medium" />
         <TextView
             android:id="@+id/description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             style="@style/BodyText"
-            android:layout_marginTop="@dimen/space_large" />
-
-        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/BodyText"
-            android:textStyle="bold"
-            android:text="Etappen"
-            android:layout_marginTop="@dimen/space_large" />
-
-        <org.example.miratrail.ui.StageProgressView
-            android:id="@+id/stage_progress"
-            android:layout_width="match_parent"
-            android:layout_height="96dp"
-            android:importantForAccessibility="yes" />
-
-        <TextView
-            android:id="@+id/stage_caption"
+            android:layout_marginTop="16dp" />
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/BodyText" />
-
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/sunny_surface" >
+            <TextView
+                style="@style/SectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/stages" />
+            <org.example.miratrail.ui.StageProgressView
+                android:id="@+id/stage_progress"
+                android:layout_width="match_parent"
+                android:layout_height="66dp"
+                android:layout_marginTop="16dp"
+                android:importantForAccessibility="yes" />
+            <TextView
+                android:id="@+id/stage_caption"
+                style="@style/CaptionText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp" />
+        </LinearLayout>
         <TextView
             android:id="@+id/note"
+            style="@style/BodyText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/BodyText"
-            android:layout_marginTop="@dimen/space_medium" />
-
+            android:layout_marginTop="16dp"
+            android:padding="16dp"
+            android:background="@drawable/sunny_note" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/next_stage"
+            style="@style/SunnyButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/next_stage" />
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/favorite"
+            style="@style/SunnyButton.Secondary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/favorite" />
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/plan"
+            style="@style/SunnyButton.Secondary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/plan" />
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/edit"
+            style="@style/SunnyButton.Secondary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/edit" />
+        <include layout="@layout/include_sunny_footer"/>
     </LinearLayout>
 </ScrollView>

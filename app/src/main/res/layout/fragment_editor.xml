@@ -1,76 +1,102 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:fillViewport="true" >
     <LinearLayout
+        style="@style/SunnyPage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/space_large">
-
+        android:orientation="vertical" >
         <TextView
             android:id="@+id/form_title"
+            style="@style/PageTitle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/PageTitle" />
-
+            android:layout_height="wrap_content" />
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/editor_illustration"
+            style="@style/SunnyIllustration"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:src="@drawable/sunny_create"
+            android:layout_marginTop="@dimen/space_medium" />
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/title_layout"
+            style="@style/SunnyInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/route_name"
-            android:layout_marginTop="@dimen/space_medium">
-
+            android:hint="@string/route_name" >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="64dp"
+                android:minLines="1"
+                android:gravity="top"
+                android:padding="16dp"
+                android:textSize="16sp"
+                android:textColor="@color/ink"
                 android:inputType="textCapSentences" />
         </com.google.android.material.textfield.TextInputLayout>
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/area_layout"
+            style="@style/SunnyInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/route_area">
-
+            android:hint="@string/route_area" >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/area"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textCapWords" />
+                android:minHeight="64dp"
+                android:minLines="1"
+                android:gravity="top"
+                android:padding="16dp"
+                android:textSize="16sp"
+                android:textColor="@color/ink"
+                android:inputType="textCapSentences" />
         </com.google.android.material.textfield.TextInputLayout>
-
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/SunnyInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/route_description">
-
+            android:hint="@string/route_description" >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="64dp"
                 android:minLines="3"
                 android:gravity="top"
+                android:padding="16dp"
+                android:textSize="16sp"
+                android:textColor="@color/ink"
                 android:inputType="textCapSentences|textMultiLine" />
         </com.google.android.material.textfield.TextInputLayout>
-
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/SunnyInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/route_note">
-
+            android:hint="@string/route_note" >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/note"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="64dp"
+                android:minLines="1"
+                android:gravity="top"
+                android:padding="16dp"
+                android:textSize="16sp"
+                android:textColor="@color/ink"
                 android:inputType="textCapSentences|textMultiLine" />
         </com.google.android.material.textfield.TextInputLayout>
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/save"
+            style="@style/SunnyButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/save" />
+        <include layout="@layout/include_sunny_footer"/>
     </LinearLayout>
 </ScrollView>

@@ -1,4 +1,6 @@
 <resources>
+    <string name="design_direction">Sonnige Entdeckertour</string>
+    <string name="stages">Etappen</string>
     <string name="app_name">Mira Wege</string>
     <string name="overview">Übersicht</string>
     <string name="catalog">Alle Wege</string>
@@ -31,4 +33,10 @@
     <string name="reset">Beispieldaten zurücksetzen</string>
     <string name="simulate_error">Ladefehler simulieren</string>
     <string name="reset_confirm">Alle Änderungen zurücksetzen?</string>
+    <string name="catalog_heading">Wege entdecken</string>
+    <string name="overview_heading">Deine Wege vor der Tür</string>
+    <string name="overview_description">Plane kleine Spaziergänge, halte Etappen fest und notiere Entdeckungen. Alles bleibt auf diesem Gerät.</string>
+    <string name="settings_heading">Lokale Daten</string>
+    <string name="settings_data_description">Alle Wege liegen nur während dieser App-Sitzung im Speicher. Beim Neustart erscheinen die ursprünglichen Beispieldaten.</string>
+    <string name="settings_error_description">Der Fehler wird beim nächsten Laden der Wegliste angezeigt. Hier kann er wieder ausgeschaltet werden.</string>
 </resources>

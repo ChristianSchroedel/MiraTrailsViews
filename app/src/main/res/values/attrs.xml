@@ -1,0 +1,5 @@
+<resources>
+    <declare-styleable name="StageProgressView">
+        <attr name="compact" format="boolean"/>
+    </declare-styleable>
+</resources>

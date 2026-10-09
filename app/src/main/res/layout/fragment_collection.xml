@@ -1,34 +1,53 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="@dimen/space_medium">
-
-    <TextView
-        android:id="@+id/heading"
+    android:fillViewport="true" >
+    <LinearLayout
+        style="@style/SunnyPage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/PageTitle" />
-
-    <TextView
-        android:id="@+id/subheading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/BodyText"
-        android:layout_marginTop="@dimen/space_small" />
-
-    <TextView
-        android:id="@+id/empty"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/BodyText"
-        android:padding="@dimen/space_medium"
-        android:visibility="gone" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/walks"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="@dimen/space_medium" />
-</LinearLayout>
+        android:orientation="vertical" >
+        <TextView
+            android:id="@+id/heading"
+            style="@style/PageTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/subheading"
+            style="@style/BodyText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" />
+        <FrameLayout
+            android:id="@+id/completed_banner"
+            android:layout_width="match_parent"
+            android:layout_height="132dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/sunny_note"
+            android:visibility="gone"
+            android:importantForAccessibility="no"
+            android:contentDescription="@null" >
+            <ImageView
+                android:layout_width="76dp"
+                android:layout_height="76dp"
+                android:layout_gravity="center"
+                android:src="@drawable/figma_badge_check" />
+        </FrameLayout>
+        <TextView
+            android:id="@+id/empty"
+            style="@style/BodyText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:visibility="gone" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/walks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginTop="16dp" />
+        <include layout="@layout/include_sunny_footer"/>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

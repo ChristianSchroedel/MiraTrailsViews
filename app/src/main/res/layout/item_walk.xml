@@ -1,31 +1,51 @@
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/space_small"
-    app:cardCornerRadius="@dimen/card_radius"
-    app:strokeColor="@color/outline"
-    app:strokeWidth="1dp">
-
+    android:layout_marginBottom="16dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="@color/surface"
+    app:strokeColor="@color/card_outline"
+    app:strokeWidth="1dp" >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/space_medium">
-
-        <TextView
-            android:id="@+id/title"
+        android:orientation="vertical" >
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/walk_illustration"
+            style="@style/SunnyIllustration"
+            android:layout_width="match_parent"
+            android:layout_height="76dp"
+            android:src="@drawable/catalog_river" />
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/ink"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/subtitle"
+            android:minHeight="84dp"
+            android:orientation="vertical"
+            android:padding="16dp" >
+            <TextView
+                android:id="@+id/title"
+                style="@style/CardTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/subtitle"
+                style="@style/CaptionText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/muted"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+        <org.example.miratrail.ui.StageProgressView
+            android:id="@+id/card_progress"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/muted"
-            android:layout_marginTop="@dimen/space_small" />
+            android:layout_height="16dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:importantForAccessibility="no"
+            android:contentDescription="@null"
+            app:compact="true" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

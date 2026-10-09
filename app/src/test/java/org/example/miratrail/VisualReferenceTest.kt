@@ -1,12 +1,13 @@
 package org.example.miratrail
 
-import android.os.Looper
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.os.Looper
 import android.view.View
 import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import com.github.takahirom.roborazzi.captureRoboImage
+import java.util.concurrent.TimeUnit
 import org.example.miratrail.ui.StageProgressView
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,7 +16,6 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
-import java.util.concurrent.TimeUnit
 
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -41,6 +41,46 @@ class VisualReferenceTest {
     fun catalogWithContent() {
         val activity = activity()
         show(activity, R.id.catalogFragment).captureRoboImage()
+    }
+
+    @Test
+    fun detail() {
+        show(activity(), R.id.detailFragment).captureRoboImage()
+    }
+
+    @Test
+    fun create() {
+        show(activity(), R.id.createFragment).captureRoboImage()
+    }
+
+    @Test
+    fun edit() {
+        show(activity(), R.id.editFragment).captureRoboImage()
+    }
+
+    @Test
+    fun favorites() {
+        show(activity(), R.id.favoritesFragment).captureRoboImage()
+    }
+
+    @Test
+    fun planned() {
+        show(activity(), R.id.plannedFragment).captureRoboImage()
+    }
+
+    @Test
+    fun completed() {
+        show(activity(), R.id.completedFragment).captureRoboImage()
+    }
+
+    @Test
+    fun notes() {
+        show(activity(), R.id.notesFragment).captureRoboImage()
+    }
+
+    @Test
+    fun settings() {
+        show(activity(), R.id.settingsFragment).captureRoboImage()
     }
 
     @Test

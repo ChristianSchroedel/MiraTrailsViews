@@ -2,5 +2,7 @@
     <dimen name="space_small">8dp</dimen>
     <dimen name="space_medium">16dp</dimen>
     <dimen name="space_large">24dp</dimen>
-    <dimen name="card_radius">16dp</dimen>
+    <dimen name="page_gutter">20dp</dimen>
+    <dimen name="card_radius">20dp</dimen>
+    <dimen name="button_radius">28dp</dimen>
 </resources>

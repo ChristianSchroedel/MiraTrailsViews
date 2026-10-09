@@ -15,9 +15,18 @@ class StageProgressView @JvmOverloads constructor(
     private var stages = listOf("Start", "Mitte", "Ziel")
     private var completed = 0
     private val density = resources.displayMetrics.density
+    private val compact = context.obtainStyledAttributes(attrs, R.styleable.StageProgressView)
+        .let { attributes ->
+            try {
+                attributes.getBoolean(R.styleable.StageProgressView_compact, false)
+            } finally {
+                attributes.recycle()
+            }
+        }
+    private val check = ContextCompat.getDrawable(context, R.drawable.figma_check)
+    private val open = ContextCompat.getDrawable(context, R.drawable.figma_stage_open)
 
     init {
-        setBackgroundColor(ContextCompat.getColor(context, R.color.cream))
         updateAccessibility()
     }
 
@@ -35,34 +44,54 @@ class StageProgressView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val left = 28f * density
-        val right = width - 28f * density
-        val centerY = 33f * density
-        val step = if (stages.size == 1) 0f else (right - left) / (stages.size - 1)
-        paint.strokeWidth = 4f * density
-        paint.color = ContextCompat.getColor(context, R.color.outline)
-        canvas.drawLine(left, centerY, right, centerY, paint)
-        if (completed > 1) {
-            paint.color = ContextCompat.getColor(context, R.color.pine)
-            canvas.drawLine(left, centerY, left + step * (completed - 1), centerY, paint)
+        if (compact) {
+            drawSegments(canvas)
+            return
         }
+        val left = 41f * density
+        val right = width - 41f * density
+        val centerY = 15f * density
+        val step = if (stages.size == 1) 0f else (right - left) / (stages.size - 1)
+        paint.strokeWidth = 2f * density
+        paint.color = ContextCompat.getColor(context, R.color.sage)
+        canvas.drawLine(left, centerY, right, centerY, paint)
         stages.forEachIndexed { index, name ->
             val x = left + step * index
             paint.color = ContextCompat.getColor(
                 context,
-                if (index < completed) R.color.pine else R.color.cream
+                if (index < completed) R.color.coral else R.color.sage
             )
             paint.style = Paint.Style.FILL
-            canvas.drawCircle(x, centerY, 11f * density, paint)
-            paint.color = ContextCompat.getColor(context, R.color.pine)
-            paint.style = Paint.Style.STROKE
-            paint.strokeWidth = 2f * density
-            canvas.drawCircle(x, centerY, 11f * density, paint)
+            canvas.drawCircle(x, centerY, 15f * density, paint)
+            val icon = if (index < completed) check else open
+            val halfSize = 8f * density
+            icon?.setBounds(
+                (x - halfSize).toInt(), (centerY - halfSize).toInt(),
+                (x + halfSize).toInt(), (centerY + halfSize).toInt()
+            )
+            icon?.draw(canvas)
             paint.style = Paint.Style.FILL
             paint.color = ContextCompat.getColor(context, R.color.ink)
             paint.textSize = 12f * resources.displayMetrics.scaledDensity
             paint.textAlign = Paint.Align.CENTER
-            canvas.drawText(name, x, centerY + 32f * density, paint)
+            canvas.drawText(name, x, 52f * density, paint)
+        }
+    }
+
+    private fun drawSegments(canvas: Canvas) {
+        val gap = 5f * density
+        val segmentWidth = ((width - paddingLeft - paddingRight) -
+            gap * (stages.size - 1)) / stages.size
+        paint.style = Paint.Style.FILL
+        stages.indices.forEach { index ->
+            paint.color = ContextCompat.getColor(
+                context, if (index < completed) R.color.coral else R.color.sage
+            )
+            val left = paddingLeft + index * (segmentWidth + gap)
+            canvas.drawRoundRect(
+                left, 0f, left + segmentWidth, 4f * density,
+                2f * density, 2f * density, paint
+            )
         }
     }
 }

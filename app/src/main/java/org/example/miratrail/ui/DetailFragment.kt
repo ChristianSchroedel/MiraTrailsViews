@@ -2,6 +2,7 @@ package org.example.miratrail.ui
 
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -42,6 +43,8 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     private fun render(view: View, walk: Walk) {
         view.findViewById<TextView>(R.id.title).text = walk.title
         view.findViewById<TextView>(R.id.area).text = walk.area
+        view.findViewById<ImageView>(R.id.detail_illustration)
+            .setImageResource(WalkIllustrations.detail(walk.id))
         view.findViewById<TextView>(R.id.description).text = walk.description
         view.findViewById<StageProgressView>(R.id.stage_progress)
             .show(walk.stages, walk.completedStages)
