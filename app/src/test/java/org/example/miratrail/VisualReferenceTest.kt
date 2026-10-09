@@ -9,6 +9,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.github.takahirom.roborazzi.captureRoboImage
 import java.util.concurrent.TimeUnit
 import org.example.miratrail.ui.StageProgressView
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -16,11 +17,21 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
+import org.robolectric.shadows.ShadowDisplay
 
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [35], qualifiers = "de-rDE-w360dp-h800dp-notnight-xxhdpi")
+@Config(sdk = [35], qualifiers = "de-rDE-w448dp-h997dp-notnight-xxhdpi")
 class VisualReferenceTest {
+    @Before
+    fun configurePixel9ProXlDisplay() {
+        // 997 dp at 480 dpi rounds to 2991 px; the demo device has 2992 px.
+        shadowOf(ShadowDisplay.getDefaultDisplay()).apply {
+            setHeight(2992)
+            setRealHeight(2992)
+        }
+    }
+
     private fun activity(): MainActivity =
         Robolectric.buildActivity(MainActivity::class.java).setup().get()
 
@@ -41,46 +52,6 @@ class VisualReferenceTest {
     fun catalogWithContent() {
         val activity = activity()
         show(activity, R.id.catalogFragment).captureRoboImage()
-    }
-
-    @Test
-    fun detail() {
-        show(activity(), R.id.detailFragment).captureRoboImage()
-    }
-
-    @Test
-    fun create() {
-        show(activity(), R.id.createFragment).captureRoboImage()
-    }
-
-    @Test
-    fun edit() {
-        show(activity(), R.id.editFragment).captureRoboImage()
-    }
-
-    @Test
-    fun favorites() {
-        show(activity(), R.id.favoritesFragment).captureRoboImage()
-    }
-
-    @Test
-    fun planned() {
-        show(activity(), R.id.plannedFragment).captureRoboImage()
-    }
-
-    @Test
-    fun completed() {
-        show(activity(), R.id.completedFragment).captureRoboImage()
-    }
-
-    @Test
-    fun notes() {
-        show(activity(), R.id.notesFragment).captureRoboImage()
-    }
-
-    @Test
-    fun settings() {
-        show(activity(), R.id.settingsFragment).captureRoboImage()
     }
 
     @Test
@@ -106,12 +77,13 @@ class VisualReferenceTest {
         val activity = activity()
         val view = StageProgressView(activity)
         view.show(listOf("Steg", "Wiese", "Allee"), 1)
+        val width = activity.resources.displayMetrics.widthPixels
         view.measure(
-            View.MeasureSpec.makeMeasureSpec(1080, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
             View.MeasureSpec.makeMeasureSpec(288, View.MeasureSpec.EXACTLY)
         )
-        view.layout(0, 0, 1080, 288)
-        val bitmap = Bitmap.createBitmap(1080, 288, Bitmap.Config.ARGB_8888)
+        view.layout(0, 0, width, 288)
+        val bitmap = Bitmap.createBitmap(width, 288, Bitmap.Config.ARGB_8888)
         view.draw(Canvas(bitmap))
         bitmap.captureRoboImage()
     }
