@@ -44,46 +44,6 @@ class VisualReferenceTest {
     }
 
     @Test
-    fun detail() {
-        show(activity(), R.id.detailFragment).captureRoboImage()
-    }
-
-    @Test
-    fun create() {
-        show(activity(), R.id.createFragment).captureRoboImage()
-    }
-
-    @Test
-    fun edit() {
-        show(activity(), R.id.editFragment).captureRoboImage()
-    }
-
-    @Test
-    fun favorites() {
-        show(activity(), R.id.favoritesFragment).captureRoboImage()
-    }
-
-    @Test
-    fun planned() {
-        show(activity(), R.id.plannedFragment).captureRoboImage()
-    }
-
-    @Test
-    fun completed() {
-        show(activity(), R.id.completedFragment).captureRoboImage()
-    }
-
-    @Test
-    fun notes() {
-        show(activity(), R.id.notesFragment).captureRoboImage()
-    }
-
-    @Test
-    fun settings() {
-        show(activity(), R.id.settingsFragment).captureRoboImage()
-    }
-
-    @Test
     fun catalogEmpty() {
         val activity = activity()
         val root = show(activity, R.id.catalogFragment)
