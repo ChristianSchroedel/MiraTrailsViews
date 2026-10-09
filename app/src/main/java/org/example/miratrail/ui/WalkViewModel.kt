@@ -54,7 +54,9 @@ class WalkViewModel(private val repository: WalkRepository) : ViewModel() {
         updateList()
     }
 
-    fun select(id: Int) { mutableState.update { it.copy(selectedId = id) } }
+    fun select(id: Int) {
+        mutableState.update { it.copy(selectedId = id) }
+    }
 
     fun setSimulateLoadError(enabled: Boolean) {
         simulateLoadError = enabled
@@ -66,7 +68,10 @@ class WalkViewModel(private val repository: WalkRepository) : ViewModel() {
     fun completeNextStage(id: Int) = update(id) {
         it.copy(completedStages = (it.completedStages + 1).coerceAtMost(it.stages.size))
     }
-    fun reset() { repository.reset(); simulateLoadError = false; updateList() }
+
+    fun reset() {
+        repository.reset(); simulateLoadError = false; updateList()
+    }
 
     private fun update(id: Int, transform: (Walk) -> Walk) {
         repository.find(id)?.let { repository.save(transform(it)) }
@@ -74,7 +79,8 @@ class WalkViewModel(private val repository: WalkRepository) : ViewModel() {
 
     private fun updateList() {
         val previous = mutableState.value
-        val filtered = WalkRules.filter(repository.walks.value, previous.query, previous.favoritesOnly)
+        val filtered =
+            WalkRules.filter(repository.walks.value, previous.query, previous.favoritesOnly)
         val phase = when {
             simulateLoadError -> CatalogPhase.ERROR
             filtered.isEmpty() -> CatalogPhase.EMPTY

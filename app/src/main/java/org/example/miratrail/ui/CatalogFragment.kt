@@ -35,7 +35,12 @@ class CatalogFragment : Fragment(R.layout.fragment_catalog) {
         val summary = view.findViewById<TextView>(R.id.list_summary)
         val selection = view.findViewById<TextView>(R.id.selection)
         val adapter = WalkAdapter(
-            onOpen = { findNavController().navigate(R.id.detailFragment, bundleOf("walkId" to it.id)) },
+            onOpen = {
+                findNavController().navigate(
+                    R.id.detailFragment,
+                    bundleOf("walkId" to it.id)
+                )
+            },
             onSelect = { model.select(it.id) }
         )
         list.layoutManager = LinearLayoutManager(requireContext())
@@ -51,12 +56,15 @@ class CatalogFragment : Fragment(R.layout.fragment_catalog) {
                     summary.text = "${state.walks.size} passende Wege"
                     loading.isVisible = state.phase == CatalogPhase.LOADING
                     list.isVisible = state.phase == CatalogPhase.CONTENT
-                    message.isVisible = state.phase == CatalogPhase.EMPTY || state.phase == CatalogPhase.ERROR
+                    message.isVisible =
+                        state.phase == CatalogPhase.EMPTY || state.phase == CatalogPhase.ERROR
                     message.setText(if (state.phase == CatalogPhase.ERROR) R.string.load_error else R.string.empty_list)
                     adapter.submitList(state.walks)
                     val selected = state.walks.firstOrNull { it.id == state.selectedId }
                     selection.isVisible = selected != null && state.phase == CatalogPhase.CONTENT
-                    selection.text = selected?.let { "Ausgewählt: ${it.title}. Antippen öffnet Details." }.orEmpty()
+                    selection.text =
+                        selected?.let { "Ausgewählt: ${it.title}. Antippen öffnet Details." }
+                            .orEmpty()
                 }
             }
         }

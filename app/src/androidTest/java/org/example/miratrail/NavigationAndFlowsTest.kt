@@ -27,7 +27,8 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class NavigationAndFlowsTest {
-    @get:Rule val activity = ActivityScenarioRule(MainActivity::class.java)
+    @get:Rule
+    val activity = ActivityScenarioRule(MainActivity::class.java)
 
     private fun openLoadedCatalog() {
         onView(withId(R.id.open_catalog)).perform(click())
@@ -36,7 +37,9 @@ class NavigationAndFlowsTest {
             override fun getDescription() = "wait for the catalog content"
             override fun perform(uiController: UiController, view: View) {
                 val deadline = SystemClock.uptimeMillis() + 5000
-                while ((view.findViewById<RecyclerView>(R.id.walks)?.let { it.isShown && (it.adapter?.itemCount ?: 0) > 0 } != true) && SystemClock.uptimeMillis() < deadline) {
+                while ((view.findViewById<RecyclerView>(R.id.walks)?.let {
+                        it.isShown && (it.adapter?.itemCount ?: 0) > 0
+                    } != true) && SystemClock.uptimeMillis() < deadline) {
                     uiController.loopMainThreadForAtLeast(50)
                 }
                 check(view.findViewById<RecyclerView>(R.id.walks)?.adapter?.itemCount ?: 0 > 0) { "Catalog did not show content" }
@@ -46,7 +49,9 @@ class NavigationAndFlowsTest {
 
     private fun openWalk(position: Int) {
         onView(withId(R.id.walks)).perform(object : ViewAction {
-            override fun getConstraints(): Matcher<View> = isAssignableFrom(RecyclerView::class.java)
+            override fun getConstraints(): Matcher<View> =
+                isAssignableFrom(RecyclerView::class.java)
+
             override fun getDescription() = "open walk at position $position"
             override fun perform(uiController: UiController, view: View) {
                 val list = view as RecyclerView
@@ -57,7 +62,8 @@ class NavigationAndFlowsTest {
         })
     }
 
-    @Test fun allOverviewDestinationsOpen() {
+    @Test
+    fun allOverviewDestinationsOpen() {
         val destinations = listOf(
             R.id.open_catalog to R.id.search,
             R.id.open_create to R.id.title_layout,
@@ -74,7 +80,8 @@ class NavigationAndFlowsTest {
         }
     }
 
-    @Test fun catalogOpensDetailsAndEditor() {
+    @Test
+    fun catalogOpensDetailsAndEditor() {
         openLoadedCatalog()
         openWalk(0)
         onView(withId(R.id.stage_progress)).check(matches(isDisplayed()))
@@ -82,7 +89,8 @@ class NavigationAndFlowsTest {
         onView(withId(R.id.title)).check(matches(withText("Am kleinen Fluss")))
     }
 
-    @Test fun validationIsVisibleAndValidWalkCanBeSaved() {
+    @Test
+    fun validationIsVisibleAndValidWalkCanBeSaved() {
         onView(withId(R.id.open_create)).perform(click())
         onView(withId(R.id.save)).perform(click())
         onView(withText("Bitte einen Namen eingeben.")).check(matches(isDisplayed()))
@@ -92,22 +100,31 @@ class NavigationAndFlowsTest {
         onView(withText("Neue Runde")).check(matches(isDisplayed()))
     }
 
-    @Test fun completedWalkDisablesNextStage() {
+    @Test
+    fun completedWalkDisablesNextStage() {
         openLoadedCatalog()
         openWalk(3)
         onView(withId(R.id.next_stage)).check(matches(not(isEnabled())))
     }
 
-    @Test fun searchCanShowEmptyState() {
+    @Test
+    fun searchCanShowEmptyState() {
         openLoadedCatalog()
         onView(withId(R.id.search)).perform(replaceText("unbekannter Ort"))
         onView(withId(R.id.message)).check(matches(withText(R.string.empty_list)))
     }
 
-    @Test fun stageViewHasAccessibleSummary() {
+    @Test
+    fun stageViewHasAccessibleSummary() {
         openLoadedCatalog()
         openWalk(0)
         onView(withId(R.id.stage_progress)).check(matches(isDisplayed()))
-        onView(withId(R.id.stage_progress)).check(matches(androidx.test.espresso.matcher.ViewMatchers.withContentDescription("Etappen: 1 von 3 abgeschlossen. Alter Steg, Wiese, Baumallee.")))
+        onView(withId(R.id.stage_progress)).check(
+            matches(
+                androidx.test.espresso.matcher.ViewMatchers.withContentDescription(
+                    "Etappen: 1 von 3 abgeschlossen. Alter Steg, Wiese, Baumallee."
+                )
+            )
+        )
     }
 }

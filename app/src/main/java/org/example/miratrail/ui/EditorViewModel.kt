@@ -28,7 +28,16 @@ class EditorViewModel(private val repository: WalkRepository) : ViewModel() {
     }
 
     fun change(title: String, area: String, description: String, note: String) {
-        mutableState.update { it.copy(title = title, area = area, description = description, note = note, titleError = null, areaError = null) }
+        mutableState.update {
+            it.copy(
+                title = title,
+                area = area,
+                description = description,
+                note = note,
+                titleError = null,
+                areaError = null
+            )
+        }
     }
 
     fun save(id: Int = 0): Walk? {

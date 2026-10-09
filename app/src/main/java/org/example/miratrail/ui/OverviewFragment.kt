@@ -24,7 +24,8 @@ class OverviewFragment : Fragment(R.layout.fragment_overview) {
             R.id.open_settings to R.id.settingsFragment
         )
         destinations.forEach { (button, destination) ->
-            view.findViewById<View>(button).setOnClickListener { findNavController().navigate(destination) }
+            view.findViewById<View>(button)
+                .setOnClickListener { findNavController().navigate(destination) }
         }
         val repository = (requireActivity().application as TrailApplication).repository
         viewLifecycleOwner.lifecycleScope.launch {

@@ -11,9 +11,10 @@ object WalkRules {
 
     fun areaError(area: String): String? = if (area.isBlank()) "Bitte einen Ort eingeben." else null
 
-    fun filter(walks: List<Walk>, query: String, onlyFavorites: Boolean): List<Walk> = walks.filter {
-        (!onlyFavorites || it.favorite) && (query.isBlank() ||
-            it.title.contains(query.trim(), ignoreCase = true) ||
-            it.area.contains(query.trim(), ignoreCase = true))
-    }
+    fun filter(walks: List<Walk>, query: String, onlyFavorites: Boolean): List<Walk> =
+        walks.filter {
+            (!onlyFavorites || it.favorite) && (query.isBlank() ||
+                it.title.contains(query.trim(), ignoreCase = true) ||
+                it.area.contains(query.trim(), ignoreCase = true))
+        }
 }

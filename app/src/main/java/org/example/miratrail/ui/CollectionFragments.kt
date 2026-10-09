@@ -28,7 +28,12 @@ abstract class CollectionFragment : Fragment(R.layout.fragment_collection) {
         view.findViewById<TextView>(R.id.subheading).text = subtitle
         val empty = view.findViewById<TextView>(R.id.empty)
         empty.text = emptyText
-        val adapter = WalkAdapter(onOpen = { findNavController().navigate(R.id.detailFragment, bundleOf("walkId" to it.id)) })
+        val adapter = WalkAdapter(onOpen = {
+            findNavController().navigate(
+                R.id.detailFragment,
+                bundleOf("walkId" to it.id)
+            )
+        })
         view.findViewById<RecyclerView>(R.id.walks).apply {
             layoutManager = LinearLayoutManager(requireContext())
             this.adapter = adapter

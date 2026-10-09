@@ -29,7 +29,8 @@ class StageProgressView @JvmOverloads constructor(
     }
 
     private fun updateAccessibility() {
-        contentDescription = "Etappen: $completed von ${stages.size} abgeschlossen. ${stages.joinToString(", ")}."
+        contentDescription =
+            "Etappen: $completed von ${stages.size} abgeschlossen. ${stages.joinToString(", ")}."
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -47,7 +48,10 @@ class StageProgressView @JvmOverloads constructor(
         }
         stages.forEachIndexed { index, name ->
             val x = left + step * index
-            paint.color = ContextCompat.getColor(context, if (index < completed) R.color.pine else R.color.cream)
+            paint.color = ContextCompat.getColor(
+                context,
+                if (index < completed) R.color.pine else R.color.cream
+            )
             paint.style = Paint.Style.FILL
             canvas.drawCircle(x, centerY, 11f * density, paint)
             paint.color = ContextCompat.getColor(context, R.color.pine)

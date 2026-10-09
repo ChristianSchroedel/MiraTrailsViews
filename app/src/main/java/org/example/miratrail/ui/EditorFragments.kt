@@ -21,7 +21,8 @@ abstract class EditorFragment : Fragment(R.layout.fragment_editor) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         if (routeId != 0 && savedInstanceState == null) model.load(routeId)
         val input = model.state.value
-        view.findViewById<TextView>(R.id.form_title).setText(if (routeId == 0) R.string.create else R.string.edit)
+        view.findViewById<TextView>(R.id.form_title)
+            .setText(if (routeId == 0) R.string.create else R.string.edit)
         val title = view.findViewById<TextInputEditText>(R.id.title)
         val area = view.findViewById<TextInputEditText>(R.id.area)
         val description = view.findViewById<TextInputEditText>(R.id.description)
@@ -46,7 +47,10 @@ abstract class EditorFragment : Fragment(R.layout.fragment_editor) {
     }
 }
 
-class CreateFragment : EditorFragment() { override val routeId: Int = 0 }
+class CreateFragment : EditorFragment() {
+    override val routeId: Int = 0
+}
+
 class EditFragment : EditorFragment() {
     override val routeId: Int get() = requireArguments().getInt("walkId")
 }

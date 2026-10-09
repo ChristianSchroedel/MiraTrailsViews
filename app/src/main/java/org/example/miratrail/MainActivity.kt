@@ -17,9 +17,13 @@ class MainActivity : AppCompatActivity() {
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
         toolbar.setTitleTextColor(ContextCompat.getColor(this, android.R.color.white))
         setSupportActionBar(toolbar)
-        setupActionBarWithNavController(navController, AppBarConfiguration(setOf(R.id.overviewFragment)))
+        setupActionBarWithNavController(
+            navController,
+            AppBarConfiguration(setOf(R.id.overviewFragment))
+        )
         toolbar.navigationIcon?.setTint(ContextCompat.getColor(this, android.R.color.white))
     }
 
-    override fun onSupportNavigateUp(): Boolean = navController.navigateUp() || super.onSupportNavigateUp()
+    override fun onSupportNavigateUp(): Boolean =
+        navController.navigateUp() || super.onSupportNavigateUp()
 }
