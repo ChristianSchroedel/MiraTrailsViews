@@ -38,14 +38,13 @@
                 android:textColor="@color/muted"
                 android:layout_marginTop="8dp" />
         </LinearLayout>
-        <org.example.miratrail.ui.StageProgressView
+        <androidx.compose.ui.platform.ComposeView
             android:id="@+id/card_progress"
             android:layout_width="match_parent"
             android:layout_height="16dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:importantForAccessibility="no"
-            android:contentDescription="@null"
-            app:compact="true" />
+            android:importantForAccessibility="noHideDescendants"
+            android:contentDescription="@null" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

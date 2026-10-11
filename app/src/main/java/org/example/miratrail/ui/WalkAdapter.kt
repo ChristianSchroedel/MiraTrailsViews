@@ -4,6 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -26,7 +29,21 @@ class WalkAdapter(
         val title: TextView = itemView.findViewById(R.id.title)
         val subtitle: TextView = itemView.findViewById(R.id.subtitle)
         val illustration: ImageView = itemView.findViewById(R.id.walk_illustration)
-        val progress: StageProgressView = itemView.findViewById(R.id.card_progress)
+        private val stageWalk = mutableStateOf<Walk?>(null)
+        private val progress: ComposeView = itemView.findViewById(R.id.card_progress)
+
+        init {
+            progress.setViewCompositionStrategy(
+                ViewCompositionStrategy.DisposeOnDetachedFromWindowOrReleasedFromPool
+            )
+            progress.setContent {
+                stageWalk.value?.let { StageProgress(it.stages, it.completedStages, compact = true) }
+            }
+        }
+
+        fun showProgress(walk: Walk) {
+            stageWalk.value = walk
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = Holder(parent)
@@ -43,7 +60,7 @@ class WalkAdapter(
             height = ((if (collectionCards) 120 else 76) *
                 holder.itemView.resources.displayMetrics.density).toInt()
         }
-        holder.progress.show(walk.stages, walk.completedStages)
+        holder.showProgress(walk)
         holder.itemView.contentDescription = "${walk.title}, ${walk.area}, Details öffnen"
         holder.itemView.isClickable = true
         holder.itemView.isFocusable = true

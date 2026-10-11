@@ -46,7 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/stages" />
-            <org.example.miratrail.ui.StageProgressView
+            <androidx.compose.ui.platform.ComposeView
                 android:id="@+id/stage_progress"
                 android:layout_width="match_parent"
                 android:layout_height="66dp"

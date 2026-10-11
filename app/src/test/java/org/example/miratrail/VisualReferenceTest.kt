@@ -1,29 +1,30 @@
 package org.example.miratrail
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.drawable.Animatable
 import android.os.Bundle
 import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.NavHostFragment
-import androidx.recyclerview.widget.RecyclerView
-import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
-import com.github.takahirom.roborazzi.captureScreenRoboImage
-import com.github.takahirom.roborazzi.captureRoboImage
-import com.google.android.material.checkbox.MaterialCheckBox
-import com.google.android.material.textfield.TextInputLayout
-import java.util.concurrent.TimeUnit
-import org.example.miratrail.data.Walk
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
-import android.widget.FrameLayout
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.NavHostFragment
+import androidx.recyclerview.widget.RecyclerView
+import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
+import com.github.takahirom.roborazzi.captureRoboImage
+import com.github.takahirom.roborazzi.captureScreenRoboImage
+import com.google.android.material.checkbox.MaterialCheckBox
+import com.google.android.material.textfield.TextInputLayout
+import java.util.concurrent.TimeUnit
+import org.example.miratrail.data.Walk
 import org.example.miratrail.ui.StageProgress
 import org.example.miratrail.ui.WalkViewModel
 import org.example.miratrail.ui.WalkViewModelFactory
@@ -115,15 +116,17 @@ class VisualReferenceTest {
         bitmap.captureRoboImage()
     }
 
-    private fun stageProgressView(activity: MainActivity, stages: List<String>, completed: Int): ComposeView {
+    private fun stageProgressView(activity: MainActivity, stages: List<String>, completed: Int, heightPixels: Int = 288): ComposeView {
         val width = activity.resources.displayMetrics.widthPixels
         val view = ComposeView(activity).apply {
-            setContent { StageProgress(stages, completed, Modifier.height(96.dp)) }
+            setContent {
+                StageProgress(stages, completed, Modifier.height((heightPixels / resources.displayMetrics.density).dp))
+            }
         }
-        activity.setContentView(view, FrameLayout.LayoutParams(width, 288))
+        activity.setContentView(view, FrameLayout.LayoutParams(width, heightPixels))
         settle()
         assertEquals(width, view.width)
-        assertEquals(288, view.height)
+        assertEquals(heightPixels, view.height)
         return view
     }
 
@@ -291,6 +294,34 @@ class VisualReferenceTest {
     }
 
     @Test
+    fun detailProgressUpdatesInPlace() {
+        val activity = activity()
+        val root = show(activity, R.id.detailFragment, Bundle().apply { putInt("walkId", 1) })
+        (2..3).forEach { completed ->
+            root.findViewById<View>(R.id.next_stage).performClick()
+            settle()
+            assertEquals("$completed von 3 Etappen abgeschlossen",
+                root.findViewById<TextView>(R.id.stage_caption).text.toString())
+            assertEquals(completed < 3, root.findViewById<View>(R.id.next_stage).isEnabled)
+            // Compare the component area only: scrolling/fading scrollbars are unrelated to recomposition.
+            val progress = root.findViewById<ComposeView>(R.id.stage_progress)
+            val location = IntArray(2)
+            progress.getLocationOnScreen(location)
+            val reference = BitmapFactory.decodeFile("src/test/snapshots/detail_progress_${completed}_window.png")
+            val expected = Bitmap.createBitmap(reference, location[0], location[1], progress.width, progress.height)
+            val derivedReference = java.io.File("build/derived-snapshots/detail_progress_$completed.png")
+            derivedReference.parentFile!!.mkdirs()
+            java.io.FileOutputStream(derivedReference).use {
+                expected.compress(Bitmap.CompressFormat.PNG, 100, it)
+            }
+            // Use the same native capture path as the screen references, rather than a software Canvas.
+            progress.captureRoboImage(derivedReference.absolutePath)
+            reference.recycle()
+            expected.recycle()
+        }
+    }
+
+    @Test
     fun detailLongContentAndGenericArtwork() {
         val walk = repository().save(Walk(0,
             "Ein langer Spaziergang durch die Gärten und entlang des alten Flussufers",
@@ -389,7 +420,8 @@ class VisualReferenceTest {
             listOf("Gemeinschaftsgarten", "Alter Aussichtspunkt", "Flussufer")
         ).forEachIndexed { index, stages ->
             (0..stages.size.coerceAtLeast(1)).forEach { completed ->
-                val view = stageProgressView(activity, stages, completed)
+                // The original View capture expanded these variant references to the full display height.
+                val view = stageProgressView(activity, stages, completed, heightPixels = 2992)
                 val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
                 view.draw(Canvas(bitmap))
                 bitmap.captureRoboImage("src/test/snapshots/stages_${index}_${completed}.png")

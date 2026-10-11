@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -31,10 +34,20 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
             findNavController().navigate(R.id.editFragment, bundleOf("walkId" to walkId))
         }
         val repository = (requireActivity().application as TrailApplication).repository
+        val stageWalk = mutableStateOf(repository.find(walkId))
+        view.findViewById<ComposeView>(R.id.stage_progress).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                stageWalk.value?.let { StageProgress(it.stages, it.completedStages) }
+            }
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 repository.walks.collect { list ->
-                    list.firstOrNull { it.id == walkId }?.let { render(view, it) }
+                    list.firstOrNull { it.id == walkId }?.let {
+                        stageWalk.value = it
+                        render(view, it)
+                    }
                 }
             }
         }
@@ -46,8 +59,8 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
         view.findViewById<ImageView>(R.id.detail_illustration)
             .setImageResource(WalkIllustrations.detail(walk.id))
         view.findViewById<TextView>(R.id.description).text = walk.description
-        view.findViewById<StageProgressView>(R.id.stage_progress)
-            .show(walk.stages, walk.completedStages)
+        view.findViewById<ComposeView>(R.id.stage_progress).contentDescription =
+            "Etappen: ${walk.completedStages} von ${walk.stages.size} abgeschlossen. ${walk.stages.joinToString(", ")}."
         view.findViewById<TextView>(R.id.stage_caption).text =
             "${walk.completedStages} von ${walk.stages.size} Etappen abgeschlossen"
         view.findViewById<TextView>(R.id.note).text =
