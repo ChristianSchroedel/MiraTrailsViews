@@ -39,4 +39,5 @@
     <string name="settings_heading">Lokale Daten</string>
     <string name="settings_data_description">Alle Wege liegen nur während dieser App-Sitzung im Speicher. Beim Neustart erscheinen die ursprünglichen Beispieldaten.</string>
     <string name="settings_error_description">Der Fehler wird beim nächsten Laden der Wegliste angezeigt. Hier kann er wieder ausgeschaltet werden.</string>
+    <string name="navigate_back">Zurück</string>
 </resources>

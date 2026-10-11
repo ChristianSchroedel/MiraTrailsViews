@@ -1,10 +1,6 @@
 package org.example.miratrail.ui
 
 import android.graphics.Paint
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -33,74 +29,27 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.*
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.*
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.StateFlow
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toUpperCase
 import org.example.miratrail.R
-
-/** The Fragment retains navigation and lifecycle ownership; all screen content is Compose. */
-abstract class SunnyComposeFragment : Fragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View =
-        ComposeView(requireContext()).apply {
-            id = R.id.screen_content
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-        }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        (view as ComposeView).setContent { SunnyTheme { Screen() } }
-    }
-
-    @Composable
-    protected abstract fun Screen()
-}
 
 @Composable
 internal fun <T> StateFlow<T>.screenValue(owner: LifecycleOwner): T {
-    val flow = remember(this, owner) { flowWithLifecycle(owner.lifecycle, Lifecycle.State.STARTED) }
-    return flow.collectAsState(initial = value).value
-}
-
-@Composable
-internal fun SunnyTheme(content: @Composable () -> Unit) {
-    MaterialTheme(
-        colorScheme = lightColorScheme(
-            primary = colorResource(R.color.coral),
-            onPrimary = colorResource(R.color.surface),
-            background = colorResource(R.color.cream),
-            onBackground = colorResource(R.color.ink),
-            surface = colorResource(R.color.surface),
-            onSurface = colorResource(R.color.ink),
-            onSurfaceVariant = colorResource(R.color.muted),
-            outline = colorResource(R.color.outline),
-            error = colorResource(R.color.coral)
-        ),
-        content = content
-    )
+    return collectAsStateWithLifecycle(lifecycleOwner = owner).value
 }
 
 @Composable
@@ -108,55 +57,15 @@ internal fun SunnyPage(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val gutter = dimensionResource(R.dimen.page_gutter)
+    val gutter = SunnySpacing.PageGutter
     Column(
         modifier
             .fillMaxSize()
-            .background(colorResource(R.color.cream))
-            .imePadding()
+            .background(SunnyColors.Cream)
+
             .verticalScroll(rememberScrollState())
             .padding(start = gutter, end = gutter, top = 8.dp),
         content = content
-    )
-}
-
-internal enum class SunnyTextStyle {
-    Body,
-    Caption,
-    PageTitle,
-    CardTitle,
-    SectionTitle
-}
-
-@Composable
-internal fun sunnyTextStyle(
-    style: SunnyTextStyle = SunnyTextStyle.Body,
-    color: Color = colorResource(R.color.ink)
-): TextStyle {
-    val size = when (style) {
-        SunnyTextStyle.Body, SunnyTextStyle.SectionTitle -> 16.sp
-        SunnyTextStyle.Caption -> 14.sp
-        SunnyTextStyle.CardTitle -> 17.sp
-        SunnyTextStyle.PageTitle -> 30.sp
-    }
-    val heading = style in listOf(
-        SunnyTextStyle.PageTitle,
-        SunnyTextStyle.CardTitle,
-        SunnyTextStyle.SectionTitle
-    )
-    val density = LocalDensity.current
-    val lineHeight = remember(size, density, heading, style) {
-        with(density) {
-            val metrics = Paint().apply { textSize = size.toPx() }.fontMetricsInt
-            (metrics.descent - metrics.ascent + if (style == SunnyTextStyle.Body) 4.dp.toPx() else 0f).toSp()
-        }
-    }
-    return TextStyle(
-        color = color,
-        fontSize = size,
-        lineHeight = lineHeight,
-        fontFamily = if (heading) FontFamily(Font(R.font.inter_bold)) else FontFamily.SansSerif,
-        platformStyle = PlatformTextStyle(includeFontPadding = false)
     )
 }
 
@@ -167,7 +76,7 @@ internal fun SunnyText(
     modifier: Modifier = Modifier,
     padding: Dp = 0.dp,
     background: Color? = null,
-    color: Color = colorResource(R.color.ink)
+    color: Color = SunnyColors.Ink
 ) {
     Text(
         text,
@@ -196,15 +105,15 @@ internal fun SunnyInput(
 ) {
     var focused by remember { mutableStateOf(false) }
     val floating = focused || value.isNotEmpty()
-    val ink = colorResource(R.color.ink)
-    val surface = colorResource(R.color.surface)
-    val hint = Color(0xFF738B95)
-    val coral = colorResource(R.color.coral)
-    val errorColor = Color(0xFFB00020)
+    val ink = SunnyColors.Ink
+    val surface = SunnyColors.Surface
+    val hint = SunnyColors.Hint
+    val coral = SunnyColors.Coral
+    val errorColor = SunnyColors.Error
     val border = when {
         error != null -> errorColor
         focused -> coral
-        else -> Color(0xFF999999)
+        else -> SunnyColors.InputOutline
     }
     val density = LocalDensity.current
     val labelInset = remember(density) {
@@ -215,7 +124,7 @@ internal fun SunnyInput(
     }
     val fieldStyle = TextStyle(
         color = ink,
-        fontFamily = FontFamily.SansSerif,
+        fontFamily = SunnyFonts.Body,
         fontSize = 16.sp,
         // Same letter spacing as the outlined TextInputEditText theme.
         letterSpacing = 0.009375.em,
@@ -249,7 +158,7 @@ internal fun SunnyInput(
                         Modifier
                             .padding(top = labelInset)
                             .fillMaxWidth()
-                            .background(colorResource(R.color.surface), RoundedCornerShape(12.dp))
+                            .background(SunnyColors.Surface, RoundedCornerShape(12.dp))
                             .border(if (focused) 2.dp else 1.dp, border, RoundedCornerShape(12.dp))
                             .heightIn(min = 64.dp)
                             .padding(
@@ -269,7 +178,7 @@ internal fun SunnyInput(
                     }
                     if (error != null) {
                         Image(
-                            painterResource(com.google.android.material.R.drawable.mtrl_ic_error),
+                            imageVector = SunnyIcons.InputError,
                             contentDescription = null,
                             colorFilter = ColorFilter.tint(errorColor),
                             modifier = Modifier
@@ -324,7 +233,7 @@ internal fun SunnyCheckbox(
     label: String,
     onCheckedChange: (Boolean) -> Unit
 ) {
-    val coral = colorResource(R.color.coral)
+    val coral = SunnyColors.Coral
     Row(
         Modifier
             .fillMaxWidth()
@@ -412,23 +321,23 @@ internal fun SunnyButton(
         onClick = onClick,
         enabled = enabled,
         shape = RoundedCornerShape(24.dp),
-        border = if (secondary) BorderStroke(1.dp, colorResource(R.color.button_outline)) else null,
+        border = if (secondary) BorderStroke(1.dp, SunnyColors.ButtonOutline) else null,
         elevation = null,
         contentPadding = PaddingValues(horizontal = 16.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(if (secondary) R.color.surface else R.color.coral),
-            contentColor = colorResource(if (secondary) R.color.ink else R.color.surface),
-            disabledContainerColor = colorResource(R.color.button_disabled),
-            disabledContentColor = colorResource(R.color.surface)
+            containerColor = if (secondary) SunnyColors.Surface else SunnyColors.Coral,
+            contentColor = if (secondary) SunnyColors.Ink else SunnyColors.Surface,
+            disabledContainerColor = SunnyColors.ButtonDisabled,
+            disabledContentColor = SunnyColors.Surface
         ),
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 48.dp)
     ) {
         Text(
-            text.uppercase(java.util.Locale.getDefault()),
+            text.toUpperCase(Locale.current),
             fontSize = 14.sp,
-            fontFamily = FontFamily.SansSerif,
+            fontFamily = SunnyFonts.Body,
             fontWeight = FontWeight.Medium,
             letterSpacing = 0.sp
         )

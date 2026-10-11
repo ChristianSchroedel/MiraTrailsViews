@@ -17,14 +17,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,9 +29,13 @@ import org.example.miratrail.R
 
 /** Overview content and scrolling are owned by Compose. */
 @Composable
-fun OverviewScreen(summary: String, onNavigate: (Int) -> Unit, modifier: Modifier = Modifier) {
-    val ink = colorResource(R.color.ink)
-    val medium = dimensionResource(R.dimen.space_medium)
+fun OverviewScreen(
+    summary: String,
+    onNavigate: (TrailRoute) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val ink = SunnyColors.Ink
+    val medium = SunnySpacing.Medium
     val density = LocalDensity.current
     // BodyText adds 4 dp to the natural font height, rather than using a total of 20 sp.
     val bodyLineHeight = remember(density) {
@@ -45,14 +45,14 @@ fun OverviewScreen(summary: String, onNavigate: (Int) -> Unit, modifier: Modifie
         }
     }
     val body = TextStyle(
-        color = ink, fontFamily = FontFamily.SansSerif, fontSize = 16.sp,
+        color = ink, fontFamily = SunnyFonts.Body, fontSize = 16.sp,
         lineHeight = bodyLineHeight, platformStyle = PlatformTextStyle(includeFontPadding = false)
     )
     SunnyPage(modifier) {
         BasicText(
             stringResource(R.string.overview_heading),
             style = body.copy(
-                fontFamily = FontFamily(Font(R.font.inter_bold)),
+                fontFamily = SunnyFonts.Heading,
                 fontSize = 30.sp,
                 lineHeight = 36.sp
             ),
@@ -71,23 +71,23 @@ fun OverviewScreen(summary: String, onNavigate: (Int) -> Unit, modifier: Modifie
             summary,
             style = body.copy(fontSize = 14.sp, lineHeight = 17.sp, textAlign = TextAlign.Center),
             modifier = Modifier.fillMaxWidth()
-                .background(colorResource(R.color.sage), RoundedCornerShape(12.dp))
+                .background(SunnyColors.Sage, RoundedCornerShape(12.dp))
                 .padding(14.dp)
         )
         Spacer(Modifier.height(medium))
         SunnyButton(
             stringResource(R.string.catalog),
-            onClick = { onNavigate(R.id.catalogFragment) })
+            onClick = { onNavigate(TrailRoute.Catalog) })
         val links = listOf(
-            OverviewLink(R.string.create, R.drawable.figma_circle_plus, R.id.createFragment),
-            OverviewLink(R.string.favorites, R.drawable.figma_heart, R.id.favoritesFragment),
-            OverviewLink(R.string.planned, R.drawable.figma_calendar, R.id.plannedFragment),
-            OverviewLink(R.string.completed, R.drawable.figma_circle_check, R.id.completedFragment),
-            OverviewLink(R.string.notes, R.drawable.figma_notebook, R.id.notesFragment),
-            OverviewLink(R.string.settings, R.drawable.figma_settings, R.id.settingsFragment)
+            OverviewLink(R.string.create, R.drawable.figma_circle_plus, TrailRoute.Create),
+            OverviewLink(R.string.favorites, R.drawable.figma_heart, TrailRoute.Favorites),
+            OverviewLink(R.string.planned, R.drawable.figma_calendar, TrailRoute.Planned),
+            OverviewLink(R.string.completed, R.drawable.figma_circle_check, TrailRoute.Completed),
+            OverviewLink(R.string.notes, R.drawable.figma_notebook, TrailRoute.Notes),
+            OverviewLink(R.string.settings, R.drawable.figma_settings, TrailRoute.Settings)
         )
         links.forEach { link ->
-            Spacer(Modifier.height(dimensionResource(R.dimen.space_small)))
+            Spacer(Modifier.height(SunnySpacing.Small))
             Row(
                 Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -109,7 +109,7 @@ fun OverviewScreen(summary: String, onNavigate: (Int) -> Unit, modifier: Modifie
     }
 }
 
-private data class OverviewLink(val label: Int, val icon: Int, val destination: Int)
+private data class OverviewLink(val label: Int, val icon: Int, val destination: TrailRoute)
 
 @Preview(
     name = "Übersicht",

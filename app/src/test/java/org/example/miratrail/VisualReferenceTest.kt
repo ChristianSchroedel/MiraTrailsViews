@@ -2,18 +2,18 @@ package org.example.miratrail
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.os.Bundle
 import android.os.Looper
 import android.widget.FrameLayout
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.NavHostFragment
 import com.github.takahirom.roborazzi.*
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -27,7 +27,7 @@ import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
-/** Existing XML references and states, now driven through the real Compose Fragment screens. */
+/** Existing XML references and states, now driven through the real Nav-3 Compose destinations. */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [35], qualifiers = "de-rDE-w448dp-h997dp-notnight-xxhdpi")
@@ -41,18 +41,12 @@ class VisualReferenceTest {
 
     private val activity get() = compose.activity
     private val repository get() = (activity.application as TrailApplication).repository
-    private val host get() = activity.supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
     private val differences = mutableListOf<String>()
     private val model
         get() = ViewModelProvider(
             activity,
             WalkViewModelFactory(repository)
         )[WalkViewModel::class.java]
-    private val editor
-        get() = ViewModelProvider(
-            host.childFragmentManager.primaryNavigationFragment!!,
-            EditorViewModelFactory(repository)
-        )[EditorViewModel::class.java]
 
     @Before
     fun reset() = compose.runOnUiThread { repository.reset() }
@@ -63,15 +57,19 @@ class VisualReferenceTest {
     }
 
     private fun settle() {
+        compose.waitForIdle()
         shadowOf(Looper.getMainLooper()).idleFor(500, TimeUnit.MILLISECONDS)
         compose.mainClock.advanceTimeBy(500)
         compose.waitForIdle()
     }
 
-    private fun show(destination: Int, id: Int = 1) {
-        compose.runOnUiThread {
-            host.navController.navigate(destination, Bundle().apply { putInt("walkId", id) })
+    private fun show(destination: TrailRoute, id: Int = 1) {
+        val route = when (destination) {
+            is TrailRoute.Detail -> TrailRoute.Detail(id)
+            is TrailRoute.Edit -> TrailRoute.Edit(id)
+            else -> destination
         }
+        compose.runOnUiThread { activity.navigation.navigate(route) }
         settle()
     }
 
@@ -109,7 +107,7 @@ class VisualReferenceTest {
         }
     }
 
-    private fun screen(destination: Int, name: String, id: Int = 1) {
+    private fun screen(destination: TrailRoute, name: String, id: Int = 1) {
         show(destination, id)
         captureScreen(name)
     }
@@ -120,7 +118,12 @@ class VisualReferenceTest {
         description: String = "",
         note: String = ""
     ) {
-        compose.runOnUiThread { editor.change(title, area, description, note) }
+        // Direct SetText changes the fixture without requesting focus or opening the IME.
+        listOf("Name" to title, "Ort" to area, "Beschreibung" to description, "Notiz" to note)
+            .forEach { (label, value) ->
+                compose.onNode(hasSetTextAction() and hasText(label))
+                    .performSemanticsAction(SemanticsActions.SetText) { it(AnnotatedString(value)) }
+            }
         settle()
     }
 
@@ -137,7 +140,7 @@ class VisualReferenceTest {
 
     @Test
     fun catalogWithContent() {
-        show(R.id.catalogFragment)
+        show(TrailRoute.Catalog)
         compose.onNodeWithText("5 passende Wege").assertIsDisplayed()
         compose.onNodeWithText("Am kleinen Fluss").assertIsDisplayed()
         assertEquals(5, model.state.value.walks.size)
@@ -146,7 +149,7 @@ class VisualReferenceTest {
 
     @Test
     fun catalogEmpty() {
-        show(R.id.catalogFragment)
+        show(TrailRoute.Catalog)
         compose.runOnUiThread { model.setQuery("kein passender Weg") }
         settle()
         compose.onNodeWithText(activity.getString(R.string.empty_list)).assertIsDisplayed()
@@ -155,7 +158,7 @@ class VisualReferenceTest {
 
     @Test
     fun formValidation() {
-        show(R.id.createFragment)
+        show(TrailRoute.Create)
         save()
         scroll(-1_000_000f)
         compose.onNodeWithText("Bitte einen Namen eingeben.").assertIsDisplayed()
@@ -163,13 +166,14 @@ class VisualReferenceTest {
     }
 
     @Test
-    fun overviewCompleteContent() = screen(R.id.overviewFragment, "overview_full")
+    fun overviewCompleteContent() = screen(TrailRoute.Overview, "overview_full")
+
     @Test
-    fun catalogCompleteContent() = screen(R.id.catalogFragment, "catalog_full")
+    fun catalogCompleteContent() = screen(TrailRoute.Catalog, "catalog_full")
 
     @Test
     fun catalogLoading() {
-        show(R.id.catalogFragment)
+        show(TrailRoute.Catalog)
         compose.mainClock.autoAdvance = false
         compose.runOnUiThread { model.load() }
         shadowOf(Looper.getMainLooper()).idle()
@@ -184,14 +188,14 @@ class VisualReferenceTest {
     @Test
     fun catalogError() {
         compose.runOnUiThread { model.setSimulateLoadError(true) }
-        show(R.id.catalogFragment)
+        show(TrailRoute.Catalog)
         compose.onNodeWithText(activity.getString(R.string.load_error)).assertIsDisplayed()
         captureScreen("catalog_error")
     }
 
     @Test
     fun catalogFavoritesFilter() {
-        show(R.id.catalogFragment)
+        show(TrailRoute.Catalog)
         compose.onNodeWithText(activity.getString(R.string.only_favorites)).performClick()
         settle()
         assertEquals(2, model.state.value.walks.size)
@@ -200,7 +204,7 @@ class VisualReferenceTest {
 
     @Test
     fun catalogSearchMatch() {
-        show(R.id.catalogFragment)
+        show(TrailRoute.Catalog)
         compose.runOnUiThread { model.setQuery("Nordufer") }
         settle()
         assertEquals(1, model.state.value.walks.size)
@@ -209,7 +213,7 @@ class VisualReferenceTest {
 
     @Test
     fun catalogFavoritesSearchEmpty() {
-        show(R.id.catalogFragment)
+        show(TrailRoute.Catalog)
         compose.runOnUiThread {
             model.setFavoritesOnly(true)
             model.setQuery("Südhöhe")
@@ -221,7 +225,7 @@ class VisualReferenceTest {
 
     @Test
     fun catalogSelection() {
-        show(R.id.catalogFragment)
+        show(TrailRoute.Catalog)
         compose.onNodeWithText("Am kleinen Fluss").performTouchInput { longClick() }
         settle()
         compose.onNodeWithText("Ausgewählt: Am kleinen Fluss. Antippen öffnet Details.")
@@ -230,8 +234,8 @@ class VisualReferenceTest {
     }
 
     private val collections = listOf(
-        R.id.favoritesFragment to "favorites", R.id.plannedFragment to "planned",
-        R.id.completedFragment to "completed", R.id.notesFragment to "notes"
+        TrailRoute.Favorites to "favorites", TrailRoute.Planned to "planned",
+        TrailRoute.Completed to "completed", TrailRoute.Notes to "notes"
     )
 
     @Test
@@ -258,7 +262,7 @@ class VisualReferenceTest {
 
     @Test
     fun detailSeedWalks() {
-        (1..5).forEach { id -> screen(R.id.detailFragment, "detail_walk_$id", id) }
+        (1..5).forEach { id -> screen(TrailRoute.Detail(), "detail_walk_$id", id) }
     }
 
     @Test
@@ -271,7 +275,7 @@ class VisualReferenceTest {
                             .copy(favorite = favorite, planned = planned)
                     )
                 }
-                screen(R.id.detailFragment, "detail_favorite_${favorite}_planned_$planned")
+                screen(TrailRoute.Detail(), "detail_favorite_${favorite}_planned_$planned")
             }
         }
     }
@@ -285,7 +289,7 @@ class VisualReferenceTest {
                         .copy(completedStages = completed)
                 )
             }
-            show(R.id.detailFragment)
+            show(TrailRoute.Detail())
             compose.onNodeWithText("NÄCHSTE ETAPPE ABSCHLIESSEN").apply {
                 if (completed < 3) assertIsEnabled() else assertIsNotEnabled()
             }
@@ -295,7 +299,7 @@ class VisualReferenceTest {
 
     @Test
     fun detailProgressUpdatesInPlace() {
-        show(R.id.detailFragment)
+        show(TrailRoute.Detail())
         (2..3).forEach { completed ->
             compose.onNodeWithText("NÄCHSTE ETAPPE ABSCHLIESSEN").performScrollTo().performClick()
             settle()
@@ -325,19 +329,19 @@ class VisualReferenceTest {
                 )
             ).id
         }
-        screen(R.id.detailFragment, "detail_long_content", id)
-        show(R.id.catalogFragment)
+        screen(TrailRoute.Detail(), "detail_long_content", id)
+        show(TrailRoute.Catalog)
         compose.runOnUiThread { model.setQuery(repository.find(id)!!.title) }
         settle()
         captureScreen("catalog_generic_artwork")
     }
 
     @Test
-    fun createBlank() = screen(R.id.createFragment, "create_blank")
+    fun createBlank() = screen(TrailRoute.Create, "create_blank")
 
     @Test
     fun createFilled() {
-        show(R.id.createFragment)
+        show(TrailRoute.Create)
         changeEditor(
             "Neue Runde am Fluss",
             "Südpark",
@@ -353,22 +357,27 @@ class VisualReferenceTest {
     fun formErrorVariants() {
         listOf("" to "", "" to "Nordufer", "Ab" to "Nordufer", "Gültiger Name" to "")
             .forEachIndexed { index, (title, area) ->
-                show(R.id.createFragment)
+                show(TrailRoute.Create)
                 changeEditor(title, area)
                 save()
-                assertTrue(editor.state.value.titleError != null || editor.state.value.areaError != null)
+                assertTrue(
+                    compose.onAllNodes(
+                        SemanticsMatcher.keyIsDefined(SemanticsProperties.Error)
+                    ).fetchSemanticsNodes().isNotEmpty()
+                )
                 captureScreen("create_validation_$index")
             }
     }
 
     @Test
-    fun editPrefilled() = screen(R.id.editFragment, "edit_prefilled")
+    fun editPrefilled() = screen(TrailRoute.Edit(), "edit_prefilled")
+
     @Test
-    fun editWithoutNote() = screen(R.id.editFragment, "edit_without_note", 2)
+    fun editWithoutNote() = screen(TrailRoute.Edit(), "edit_without_note", 2)
 
     @Test
     fun editValidationAndCorrection() {
-        show(R.id.editFragment)
+        show(TrailRoute.Edit())
         val old = repository.find(1)!!
         changeEditor("", "", old.description, old.note)
         save()
@@ -381,7 +390,7 @@ class VisualReferenceTest {
     @OptIn(ExperimentalRoborazziApi::class)
     @Test
     fun settingsStatesAndResetDialog() {
-        show(R.id.settingsFragment)
+        show(TrailRoute.Settings)
         captureScreen("settings_default")
         compose.onNodeWithText(activity.getString(R.string.simulate_error))
             .performClick()

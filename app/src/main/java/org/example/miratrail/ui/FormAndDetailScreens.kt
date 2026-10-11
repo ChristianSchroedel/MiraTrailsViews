@@ -11,15 +11,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogWindowProvider
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toUpperCase
 import org.example.miratrail.R
 import org.example.miratrail.data.Walk
 
@@ -34,7 +34,7 @@ fun DetailScreen(
     SunnyPage {
         SunnyText(walk.title, SunnyTextStyle.PageTitle)
         Spacer(Modifier.height(16.dp))
-        SunnyText(walk.area, SunnyTextStyle.Caption, color = colorResource(R.color.muted))
+        SunnyText(walk.area, SunnyTextStyle.Caption, color = SunnyColors.Muted)
         Spacer(Modifier.height(16.dp))
         SunnyImage(WalkIllustrations.detail(walk.id), 176.dp)
         Spacer(Modifier.height(16.dp))
@@ -43,7 +43,7 @@ fun DetailScreen(
         Column(
             Modifier
                 .fillMaxWidth()
-                .background(colorResource(R.color.surface), RoundedCornerShape(16.dp))
+                .background(SunnyColors.Surface, RoundedCornerShape(16.dp))
                 .padding(16.dp)
         ) {
             SunnyText(stringResource(R.string.stages), SunnyTextStyle.SectionTitle)
@@ -58,7 +58,7 @@ fun DetailScreen(
         Spacer(Modifier.height(16.dp))
         SunnyText(
             if (walk.note.isBlank()) "Noch keine Notiz." else "Notiz: ${walk.note}",
-            padding = 16.dp, background = colorResource(R.color.sage)
+            padding = 16.dp, background = SunnyColors.Sage
         )
         Spacer(Modifier.height(16.dp))
         SunnyButton(stringResource(R.string.next_stage), onNext, enabled = !walk.isComplete)
@@ -148,13 +148,13 @@ fun SettingsScreen(initialError: Boolean, onErrorChanged: (Boolean) -> Unit, onR
         SunnyText(
             stringResource(R.string.settings_data_description),
             padding = 18.dp,
-            background = colorResource(R.color.sage)
+            background = SunnyColors.Sage
         )
         Spacer(Modifier.height(16.dp))
         Column(
             Modifier
                 .fillMaxWidth()
-                .background(colorResource(R.color.surface), RoundedCornerShape(16.dp))
+                .background(SunnyColors.Surface, RoundedCornerShape(16.dp))
                 .padding(16.dp)
         ) {
             SunnyCheckbox(error, stringResource(R.string.simulate_error)) { checked ->
@@ -176,7 +176,7 @@ fun SettingsScreen(initialError: Boolean, onErrorChanged: (Boolean) -> Unit, onR
             SideEffect { dialogWindow.setDimAmount(0.32f) }
             Surface(
                 shape = RoundedCornerShape(4.dp),
-                color = colorResource(R.color.surface),
+                color = SunnyColors.Surface,
                 shadowElevation = 8.dp,
                 modifier = Modifier.width(IntrinsicSize.Max)
             ) {
@@ -188,7 +188,7 @@ fun SettingsScreen(initialError: Boolean, onErrorChanged: (Boolean) -> Unit, onR
                             stringResource(R.string.reset_confirm),
                             style = sunnyTextStyle(
                                 SunnyTextStyle.Caption,
-                                Color(0xFF738B95)
+                                SunnyColors.Hint
                             )
                         )
                     }
@@ -222,8 +222,8 @@ private fun ResetDialogButton(label: String, onClick: () -> Unit) {
         modifier = Modifier.height(48.dp)
     ) {
         Text(
-            label.uppercase(java.util.Locale.getDefault()),
-            fontFamily = FontFamily.SansSerif,
+            label.toUpperCase(Locale.current),
+            fontFamily = SunnyFonts.Body,
             fontWeight = FontWeight.Medium,
             fontSize = 14.sp,
             letterSpacing = 0.sp

@@ -25,9 +25,9 @@ fun CatalogScreen(
     state: CatalogState, onQuery: (String) -> Unit, onFavorites: (Boolean) -> Unit,
     onRefresh: () -> Unit, onOpen: (Walk) -> Unit, onSelect: (Walk) -> Unit
 ) {
-    val gutter = dimensionResource(R.dimen.page_gutter)
+    val gutter = SunnySpacing.PageGutter
     LazyColumn(
-        Modifier.fillMaxSize().background(colorResource(R.color.cream)).imePadding(),
+        Modifier.fillMaxSize().background(SunnyColors.Cream),
         contentPadding = PaddingValues(start = gutter, end = gutter, top = 8.dp)
     ) {
         item(key = "header") {
@@ -53,7 +53,7 @@ fun CatalogScreen(
                     Spacer(Modifier.height(16.dp))
                     SunnyText(
                         "Ausgewählt: ${selected.title}. Antippen öffnet Details.",
-                        padding = 12.dp, background = colorResource(R.color.sage)
+                        padding = 12.dp, background = SunnyColors.Sage
                     )
                 }
                 when (state.phase) {
@@ -63,7 +63,7 @@ fun CatalogScreen(
                     ) {
                         CircularProgressIndicator(
                             Modifier.size(48.dp).semantics { contentDescription = "Wird geladen" },
-                            color = colorResource(R.color.coral)
+                            color = SunnyColors.Coral
                         )
                     }
 
@@ -96,9 +96,9 @@ fun CollectionScreen(
     heading: String, subtitle: String, emptyText: String, walks: List<Walk>,
     completed: Boolean, onOpen: (Walk) -> Unit
 ) {
-    val gutter = dimensionResource(R.dimen.page_gutter)
+    val gutter = SunnySpacing.PageGutter
     LazyColumn(
-        Modifier.fillMaxSize().background(colorResource(R.color.cream)),
+        Modifier.fillMaxSize().background(SunnyColors.Cream),
         contentPadding = PaddingValues(start = gutter, end = gutter, top = 8.dp)
     ) {
         item(key = "header") {
@@ -110,7 +110,7 @@ fun CollectionScreen(
                     Spacer(Modifier.height(16.dp))
                     Box(
                         Modifier.fillMaxWidth().height(132.dp)
-                            .background(colorResource(R.color.sage), RoundedCornerShape(16.dp)),
+                            .background(SunnyColors.Sage, RoundedCornerShape(16.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Image(
@@ -138,8 +138,8 @@ internal fun WalkCard(
     collectionCard: Boolean = false
 ) {
     Surface(
-        shape = RoundedCornerShape(20.dp), color = colorResource(R.color.surface),
-        border = BorderStroke(1.dp, colorResource(R.color.card_outline)),
+        shape = RoundedCornerShape(20.dp), color = SunnyColors.Surface,
+        border = BorderStroke(1.dp, SunnyColors.CardOutline),
         modifier = Modifier.fillMaxWidth().combinedClickable(
             role = Role.Button, onClickLabel = "Details öffnen",
             onClick = { onOpen(walk) },
@@ -158,7 +158,7 @@ internal fun WalkCard(
                 Spacer(Modifier.height(8.dp))
                 SunnyText(
                     "${walk.area} · ${walk.completedStages}/${walk.stages.size} Etappen",
-                    SunnyTextStyle.Caption, color = colorResource(R.color.muted)
+                    SunnyTextStyle.Caption, color = SunnyColors.Muted
                 )
             }
             StageProgress(

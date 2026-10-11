@@ -1,47 +1,39 @@
 package org.example.miratrail
 
+import android.graphics.Color
 import android.os.Bundle
-import android.view.View
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import com.google.android.material.appbar.MaterialToolbar
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
+import androidx.lifecycle.ViewModelProvider
+import org.example.miratrail.ui.*
 
-class MainActivity : AppCompatActivity() {
-    private val navController get() = (supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment).navController
+class MainActivity : ComponentActivity() {
+    lateinit var navigation: TrailNavigation
+        private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.enableEdgeToEdge(window)
-        setContentView(R.layout.activity_main)
-        val root = findViewById<View>(R.id.app_root)
-        ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
-            val safe = insets.getInsets(
-                WindowInsetsCompat.Type.systemBars() or
-                    WindowInsetsCompat.Type.displayCutout() or WindowInsetsCompat.Type.ime()
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.light(
+                SunnyColors.Cream.toArgb(), SunnyColors.Cream.toArgb()
             )
-            view.setPadding(safe.left, safe.top, safe.right, safe.bottom)
-            WindowInsetsCompat.CONSUMED
-        }
-        ViewCompat.requestApplyInsets(root)
-        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
-        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.ink))
-        setSupportActionBar(toolbar)
-        setupActionBarWithNavController(
-            navController,
-            AppBarConfiguration(setOf(R.id.overviewFragment))
         )
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            toolbar.navigationIcon = if (destination.id == R.id.overviewFragment) null
-            else ContextCompat.getDrawable(this, R.drawable.figma_back)
+        val repository = (application as TrailApplication).repository
+        val model =
+            ViewModelProvider(this, WalkViewModelFactory(repository))[WalkViewModel::class.java]
+        setContent {
+            val state = rememberTrailNavigation()
+            SideEffect { navigation = state }
+            SunnyTheme {
+                AppShell(state.currentRoute, onBack = state::goBack) {
+                    TrailNavDisplay(state, repository, model)
+                }
+            }
         }
     }
-
-    override fun onSupportNavigateUp(): Boolean =
-        navController.navigateUp() || super.onSupportNavigateUp()
 }

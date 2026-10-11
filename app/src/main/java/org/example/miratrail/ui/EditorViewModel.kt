@@ -1,7 +1,10 @@
 package org.example.miratrail.ui
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -18,13 +21,28 @@ data class EditorState(
     val areaError: String? = null
 )
 
-class EditorViewModel(private val repository: WalkRepository) : ViewModel() {
-    private val mutableState = MutableStateFlow(EditorState())
+class EditorViewModel(
+    private val repository: WalkRepository,
+    private val savedState: SavedStateHandle = SavedStateHandle(),
+    walkId: Int = 0
+) : ViewModel() {
+    private val existing = repository.find(walkId)
+    private val mutableState = MutableStateFlow(
+        EditorState(
+            title = savedState["title"] ?: existing?.title.orEmpty(),
+            area = savedState["area"] ?: existing?.area.orEmpty(),
+            description = savedState["description"] ?: existing?.description.orEmpty(),
+            note = savedState["note"] ?: existing?.note.orEmpty(),
+            titleError = savedState["titleError"],
+            areaError = savedState["areaError"]
+        )
+    )
     val state: StateFlow<EditorState> = mutableState
 
     fun load(id: Int) {
         val walk = repository.find(id) ?: return
         mutableState.value = EditorState(walk.title, walk.area, walk.description, walk.note)
+        rememberInput()
     }
 
     fun change(title: String, area: String, description: String, note: String) {
@@ -38,6 +56,7 @@ class EditorViewModel(private val repository: WalkRepository) : ViewModel() {
                 areaError = null
             )
         }
+        rememberInput()
     }
 
     fun save(id: Int = 0): Walk? {
@@ -46,6 +65,7 @@ class EditorViewModel(private val repository: WalkRepository) : ViewModel() {
         val areaError = WalkRules.areaError(input.area)
         if (titleError != null || areaError != null) {
             mutableState.update { it.copy(titleError = titleError, areaError = areaError) }
+            rememberInput()
             return null
         }
         val old = repository.find(id)
@@ -56,9 +76,27 @@ class EditorViewModel(private val repository: WalkRepository) : ViewModel() {
             )
         )
     }
+
+    private fun rememberInput() {
+        val input = mutableState.value
+        savedState["title"] = input.title
+        savedState["area"] = input.area
+        savedState["description"] = input.description
+        savedState["note"] = input.note
+        savedState["titleError"] = input.titleError
+        savedState["areaError"] = input.areaError
+    }
 }
 
-class EditorViewModelFactory(private val repository: WalkRepository) : ViewModelProvider.Factory {
+class EditorViewModelFactory(
+    private val repository: WalkRepository,
+    private val walkId: Int = 0
+) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = EditorViewModel(repository) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T =
+        EditorViewModel(repository, walkId = walkId) as T
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T =
+        EditorViewModel(repository, extras.createSavedStateHandle(), walkId) as T
 }

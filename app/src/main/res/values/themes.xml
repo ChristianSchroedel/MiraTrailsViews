@@ -1,0 +1,8 @@
+<resources>
+    <!-- Platform launch window only. Compose styling lives in SunnyTheme.kt. -->
+    <style name="Theme.MiraTrail" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:colorBackground">@color/cream</item>
+        <item name="android:windowBackground">@color/cream</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

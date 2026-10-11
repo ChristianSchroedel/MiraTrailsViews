@@ -1,15 +1,14 @@
 package org.example.miratrail
 
-import android.os.Bundle
 import android.os.Looper
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.navigation.fragment.NavHostFragment
 import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
 import com.github.takahirom.roborazzi.RoborazziOptions
 import com.github.takahirom.roborazzi.RoborazziTaskType
 import com.github.takahirom.roborazzi.captureRoboImage
 import java.util.concurrent.TimeUnit
+import org.example.miratrail.ui.TrailRoute
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -39,12 +38,9 @@ class ComposeScreenTest {
         }
     }
 
-    private fun show(destination: Int, walkId: Int = 1) {
-        compose.runOnUiThread {
-            val host =
-                compose.activity.supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
-            host.navController.navigate(destination, Bundle().apply { putInt("walkId", walkId) })
-        }
+    private fun show(destination: TrailRoute) {
+        compose.runOnUiThread { compose.activity.navigation.navigate(destination) }
+        compose.waitForIdle()
         shadowOf(Looper.getMainLooper()).idleFor(500, TimeUnit.MILLISECONDS)
         compose.waitForIdle()
     }
@@ -59,7 +55,7 @@ class ComposeScreenTest {
 
     @Test
     fun catalogSelectionSearchAndOpen() {
-        show(R.id.catalogFragment)
+        show(TrailRoute.Catalog)
         compose.onNodeWithText("5 passende Wege").assertIsDisplayed()
         compose.onNodeWithText("Am kleinen Fluss").assertIsDisplayed()
         review("catalog")
@@ -78,7 +74,7 @@ class ComposeScreenTest {
 
     @Test
     fun editorValidationAndSave() {
-        show(R.id.createFragment)
+        show(TrailRoute.Create)
         review("editor")
         compose.onNodeWithText("SPEICHERN").performScrollTo().performClick()
         compose.onNodeWithText("Bitte einen Namen eingeben.").performScrollTo().assertIsDisplayed()
@@ -96,7 +92,7 @@ class ComposeScreenTest {
 
     @Test
     fun detailProgressAndNavigation() {
-        show(R.id.detailFragment)
+        show(TrailRoute.Detail())
         review("detail")
         compose.onNodeWithText("NÄCHSTE ETAPPE ABSCHLIESSEN").performScrollTo().performClick()
         compose.onNodeWithText("2 von 3 Etappen abgeschlossen")
@@ -111,7 +107,7 @@ class ComposeScreenTest {
     @Test
     fun settingsResetRequiresConfirmation() {
         repository.save(repository.find(1)!!.copy(title = "Geändert"))
-        show(R.id.settingsFragment)
+        show(TrailRoute.Settings)
         review("settings")
         compose.onNodeWithText("Ladefehler simulieren").performClick().assertIsOn()
         compose.onNodeWithText("BEISPIELDATEN ZURÜCKSETZEN").performScrollTo().performClick()
@@ -132,17 +128,33 @@ class ComposeScreenTest {
     fun overviewAndCollectionsRender() {
         review("overview")
         compose.onNodeWithText("ALLE WEGE").performClick()
+        compose.waitForIdle()
         shadowOf(Looper.getMainLooper()).idleFor(500, TimeUnit.MILLISECONDS)
         compose.waitForIdle()
         compose.onNodeWithText("Am kleinen Fluss").assertExists()
         for ((destination, name) in listOf(
-            R.id.favoritesFragment to "favorites",
-            R.id.plannedFragment to "planned",
-            R.id.completedFragment to "completed",
-            R.id.notesFragment to "notes"
+            TrailRoute.Favorites to "favorites",
+            TrailRoute.Planned to "planned",
+            TrailRoute.Completed to "completed",
+            TrailRoute.Notes to "notes"
         )) {
             show(destination)
             review(name)
         }
+    }
+
+    @Test
+    fun repeatedEditorEntriesKeepIndependentDrafts() {
+        show(TrailRoute.Edit(1))
+        compose.onNode(hasSetTextAction() and hasText("Am kleinen Fluss"))
+            .performTextReplacement("Erster Entwurf")
+        show(TrailRoute.Edit(1))
+        compose.onNode(hasSetTextAction() and hasText("Am kleinen Fluss")).assertIsDisplayed()
+        compose.onNode(hasSetTextAction() and hasText("Am kleinen Fluss"))
+            .performTextReplacement("Zweiter Entwurf")
+        compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
+        compose.onNode(hasSetTextAction() and hasText("Erster Entwurf")).assertIsDisplayed()
+        show(TrailRoute.Edit(1))
+        compose.onNode(hasSetTextAction() and hasText("Am kleinen Fluss")).assertIsDisplayed()
     }
 }

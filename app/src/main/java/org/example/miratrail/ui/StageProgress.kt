@@ -14,7 +14,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -36,13 +35,15 @@ fun StageProgress(
 ) {
     val visibleStages = stages.ifEmpty { listOf("Start") }
     val completed = completedStages.coerceIn(0, visibleStages.size)
-    val sage = colorResource(R.color.sage)
-    val coral = colorResource(R.color.coral)
-    val ink = colorResource(R.color.ink)
+    val sage = SunnyColors.Sage
+    val coral = SunnyColors.Coral
+    val ink = SunnyColors.Ink
     val check = painterResource(R.drawable.figma_check)
     val open = painterResource(R.drawable.figma_stage_open)
-    val labelPaint = remember { Paint(Paint.ANTI_ALIAS_FLAG).apply { textAlign = Paint.Align.CENTER } }
-    val summary = "Etappen: $completed von ${visibleStages.size} abgeschlossen. ${visibleStages.joinToString(", ")}."
+    val labelPaint =
+        remember { Paint(Paint.ANTI_ALIAS_FLAG).apply { textAlign = Paint.Align.CENTER } }
+    val summary =
+        "Etappen: $completed von ${visibleStages.size} abgeschlossen. ${visibleStages.joinToString(", ")}."
 
     Canvas(
         modifier = modifier
@@ -65,7 +66,8 @@ fun StageProgress(
             val left = 41.dp.toPx()
             val right = size.width - 41.dp.toPx()
             val centerY = 15.dp.toPx()
-            val step = if (visibleStages.size == 1) 0f else (right - left) / (visibleStages.size - 1)
+            val step =
+                if (visibleStages.size == 1) 0f else (right - left) / (visibleStages.size - 1)
             drawLine(sage, Offset(left, centerY), Offset(right, centerY), strokeWidth = 2.dp.toPx())
             labelPaint.color = ink.toArgb()
             // Use Android Paint font metrics and a 52 dp text baseline.
@@ -93,13 +95,21 @@ fun StageProgress(
 @Preview(name = "Etappen", widthDp = 448, showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 private fun StageProgressPreview() {
-    StageProgress(listOf("Steg", "Wiese", "Allee"), completedStages = 1, modifier = Modifier.height(96.dp))
+    StageProgress(
+        listOf("Steg", "Wiese", "Allee"),
+        completedStages = 1,
+        modifier = Modifier.height(96.dp)
+    )
 }
 
 @Preview(name = "Abgeschlossen", widthDp = 448, showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 private fun StageProgressCompletedPreview() {
-    StageProgress(listOf("Steg", "Wiese", "Allee"), completedStages = 3, modifier = Modifier.height(96.dp))
+    StageProgress(
+        listOf("Steg", "Wiese", "Allee"),
+        completedStages = 3,
+        modifier = Modifier.height(96.dp)
+    )
 }
 
 @Preview(name = "Kompakt", widthDp = 448, showBackground = true, backgroundColor = 0xFFFFFFFF)
