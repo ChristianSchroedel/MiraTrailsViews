@@ -25,7 +25,7 @@ import org.example.miratrail.R
 /**
  * Stage progress for both the detail screen and compact walk cards.
  * For card segments, use compact = true and Modifier.padding(horizontal = 16.dp),
- * matching item_walk.xml. No background is drawn.
+ * within a WalkCard. No background is drawn.
  */
 @Composable
 fun StageProgress(

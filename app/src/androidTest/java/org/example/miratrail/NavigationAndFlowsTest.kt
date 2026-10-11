@@ -1,133 +1,134 @@
 package org.example.miratrail
 
-import android.os.SystemClock
-import android.view.View
-import androidx.recyclerview.widget.RecyclerView
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.Espresso.pressBack
-import androidx.test.espresso.UiController
-import androidx.test.espresso.ViewAction
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
-import androidx.test.espresso.action.ViewActions.replaceText
-import androidx.test.espresso.action.ViewActions.scrollTo
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.isEnabled
-import androidx.test.espresso.matcher.ViewMatchers.isRoot
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.ext.junit.rules.ActivityScenarioRule
+import android.content.Context
+import android.view.inputmethod.InputMethodManager
+import androidx.compose.ui.test.*
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.navigation.fragment.NavHostFragment
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import org.hamcrest.Matcher
-import org.hamcrest.Matchers.not
+import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.Locale
 
+/** The six original Espresso journeys, exercised through Compose semantics. */
 @RunWith(AndroidJUnit4::class)
 class NavigationAndFlowsTest {
     @get:Rule
-    val activity = ActivityScenarioRule(MainActivity::class.java)
+    val compose = createAndroidComposeRule<MainActivity>()
 
-    private fun openLoadedCatalog() {
-        onView(withId(R.id.open_catalog)).perform(click())
-        onView(isRoot()).perform(object : ViewAction {
-            override fun getConstraints(): Matcher<View> = isRoot()
-            override fun getDescription() = "wait for the catalog content"
-            override fun perform(uiController: UiController, view: View) {
-                val deadline = SystemClock.uptimeMillis() + 5000
-                while ((view.findViewById<RecyclerView>(R.id.walks)?.let {
-                        it.isShown && (it.adapter?.itemCount ?: 0) > 0
-                    } != true) && SystemClock.uptimeMillis() < deadline) {
-                    uiController.loopMainThreadForAtLeast(50)
-                }
-                check(view.findViewById<RecyclerView>(R.id.walks)?.adapter?.itemCount ?: 0 > 0) { "Catalog did not show content" }
-            }
-        })
+    @Before
+    fun resetExamples() {
+        compose.runOnUiThread {
+            (compose.activity.application as TrailApplication).repository.reset()
+        }
     }
 
-    private fun openWalk(position: Int) {
-        onView(withId(R.id.walks)).perform(object : ViewAction {
-            override fun getConstraints(): Matcher<View> =
-                isAssignableFrom(RecyclerView::class.java)
+    private fun text(resource: Int) = compose.activity.getString(resource)
+    private fun button(resource: Int) =
+        compose.onNodeWithText(text(resource).uppercase(Locale.getDefault()))
 
-            override fun getDescription() = "open walk at position $position"
-            override fun perform(uiController: UiController, view: View) {
-                val list = view as RecyclerView
-                list.scrollToPosition(position)
-                uiController.loopMainThreadUntilIdle()
-                checkNotNull(list.findViewHolderForAdapterPosition(position)).itemView.performClick()
-            }
-        })
+    private fun destination() =
+        (compose.activity.supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment)
+            .navController.currentDestination!!.id
+
+    private fun openLoadedCatalog() {
+        button(R.string.catalog).performScrollTo().performClick()
+        compose.waitUntil(5_000) {
+            compose.onAllNodesWithText("Am kleinen Fluss").fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithText("5 passende Wege").assertIsDisplayed()
+    }
+
+    private fun openWalk(title: String) {
+        compose.onNode(hasScrollToNodeAction()).performScrollToNode(hasText(title))
+        compose.onNodeWithText(title).performClick()
+        compose.runOnIdle { assertEquals(R.id.detailFragment, destination()) }
+    }
+
+    private fun dismissKeyboard() {
+        compose.runOnUiThread {
+            val manager =
+                compose.activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            manager.hideSoftInputFromWindow(compose.activity.window.decorView.windowToken, 0)
+        }
+        compose.waitForIdle()
     }
 
     @Test
     fun allOverviewDestinationsOpen() {
         val destinations = listOf(
-            R.id.open_catalog to R.id.search,
-            R.id.open_create to R.id.title_layout,
-            R.id.open_favorites to R.id.heading,
-            R.id.open_planned to R.id.heading,
-            R.id.open_completed to R.id.heading,
-            R.id.open_notes to R.id.heading,
-            R.id.open_settings to R.id.simulate_error
+            Triple(R.string.catalog, R.id.catalogFragment, text(R.string.search_hint)),
+            Triple(R.string.create, R.id.createFragment, text(R.string.route_name)),
+            Triple(R.string.favorites, R.id.favoritesFragment, text(R.string.favorites)),
+            Triple(R.string.planned, R.id.plannedFragment, text(R.string.planned)),
+            Triple(R.string.completed, R.id.completedFragment, text(R.string.completed)),
+            Triple(R.string.notes, R.id.notesFragment, text(R.string.notes)),
+            Triple(R.string.settings, R.id.settingsFragment, text(R.string.simulate_error))
         )
-        destinations.forEach { (button, evidence) ->
-            onView(withId(button)).perform(scrollTo(), click())
-            onView(withId(evidence)).check(matches(isDisplayed()))
-            pressBack()
+        destinations.forEach { (label, expectedDestination, evidence) ->
+            button(label).performScrollTo().performClick()
+            compose.onNodeWithText(evidence).assertIsDisplayed()
+            compose.runOnIdle { assertEquals(expectedDestination, destination()) }
+            compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
+            compose.onNodeWithText(text(R.string.overview_heading)).assertIsDisplayed()
         }
     }
 
     @Test
     fun catalogOpensDetailsAndEditor() {
         openLoadedCatalog()
-        openWalk(0)
-        onView(withId(R.id.stage_progress)).perform(scrollTo()).check(matches(isDisplayed()))
-        onView(withId(R.id.edit)).perform(scrollTo(), click())
-        onView(withId(R.id.title)).check(matches(withText("Am kleinen Fluss")))
+        openWalk("Am kleinen Fluss")
+        compose.onNodeWithContentDescription(
+            "Etappen: 1 von 3 abgeschlossen. Alter Steg, Wiese, Baumallee."
+        ).performScrollTo().assertIsDisplayed()
+        button(R.string.edit).performScrollTo().performClick()
+        compose.onNode(hasSetTextAction() and hasText("Am kleinen Fluss")).assertIsDisplayed()
+        compose.runOnIdle { assertEquals(R.id.editFragment, destination()) }
     }
 
     @Test
     fun validationIsVisibleAndValidWalkCanBeSaved() {
-        onView(withId(R.id.open_create)).perform(click())
-        onView(withId(R.id.save)).perform(scrollTo(), click())
-        onView(withId(R.id.title_layout)).perform(scrollTo())
-        onView(withText("Bitte einen Namen eingeben.")).check(matches(isDisplayed()))
-        onView(withId(R.id.title)).perform(scrollTo(), replaceText("Neue Runde"), closeSoftKeyboard())
-        onView(withId(R.id.area)).perform(scrollTo(), replaceText("Südpark"), closeSoftKeyboard())
-        onView(withId(R.id.save)).perform(closeSoftKeyboard(), scrollTo(), click())
-        onView(withText("Neue Runde")).check(matches(isDisplayed()))
+        button(R.string.create).performScrollTo().performClick()
+        button(R.string.save).performScrollTo().performClick()
+        compose.onNodeWithText("Bitte einen Namen eingeben.").performScrollTo().assertIsDisplayed()
+        compose.onNode(hasSetTextAction() and hasText(text(R.string.route_name)))
+            .performScrollTo().performTextReplacement("Neue Runde")
+        dismissKeyboard()
+        compose.onNode(hasSetTextAction() and hasText(text(R.string.route_area)))
+            .performScrollTo().performTextReplacement("Südpark")
+        dismissKeyboard()
+        button(R.string.save).performScrollTo().performClick()
+        compose.onNodeWithText("Neue Runde").assertIsDisplayed()
+        compose.runOnIdle { assertEquals(R.id.detailFragment, destination()) }
     }
 
     @Test
     fun completedWalkDisablesNextStage() {
         openLoadedCatalog()
-        openWalk(3)
-        onView(withId(R.id.next_stage)).perform(scrollTo()).check(matches(not(isEnabled())))
+        openWalk("Markt und Mauer")
+        button(R.string.next_stage).performScrollTo().assertIsDisplayed().assertIsNotEnabled()
     }
 
     @Test
     fun searchCanShowEmptyState() {
         openLoadedCatalog()
-        onView(withId(R.id.search)).perform(replaceText("unbekannter Ort"))
-        onView(withId(R.id.message)).check(matches(withText(R.string.empty_list)))
+        compose.onNode(hasSetTextAction() and hasText(text(R.string.search_hint)))
+            .performTextReplacement("unbekannter Ort")
+        dismissKeyboard()
+        compose.onNodeWithText(text(R.string.empty_list)).assertIsDisplayed()
+        compose.onNodeWithText("0 passende Wege").assertIsDisplayed()
+        compose.onNodeWithText("Am kleinen Fluss").assertDoesNotExist()
     }
 
     @Test
     fun stageViewHasAccessibleSummary() {
         openLoadedCatalog()
-        openWalk(0)
-        onView(withId(R.id.stage_progress)).perform(scrollTo()).check(matches(isDisplayed()))
-        onView(withId(R.id.stage_progress)).check(
-            matches(
-                androidx.test.espresso.matcher.ViewMatchers.withContentDescription(
-                    "Etappen: 1 von 3 abgeschlossen. Alter Steg, Wiese, Baumallee."
-                )
-            )
-        )
+        openWalk("Am kleinen Fluss")
+        compose.onNodeWithContentDescription(
+            "Etappen: 1 von 3 abgeschlossen. Alter Steg, Wiese, Baumallee."
+        ).performScrollTo().assertIsDisplayed()
     }
 }

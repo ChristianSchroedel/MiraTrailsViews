@@ -1,55 +1,33 @@
 package org.example.miratrail.ui
 
-import android.os.Bundle
-import android.view.View
-import android.widget.TextView
+import androidx.compose.runtime.Composable
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.launch
 import org.example.miratrail.R
 import org.example.miratrail.TrailApplication
 import org.example.miratrail.data.Walk
 
-abstract class CollectionFragment : Fragment(R.layout.fragment_collection) {
+abstract class CollectionFragment : SunnyComposeFragment() {
     protected abstract val heading: String
     protected abstract val subtitle: String
     protected abstract val emptyText: String
     protected abstract fun accepts(walk: Walk): Boolean
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        view.findViewById<TextView>(R.id.heading).text = heading
-        view.findViewById<TextView>(R.id.subheading).text = subtitle
-        val empty = view.findViewById<TextView>(R.id.empty)
-        empty.text = emptyText
-        val adapter = WalkAdapter(collectionCards = true, onOpen = {
-            findNavController().navigate(
-                R.id.detailFragment,
-                bundleOf("walkId" to it.id)
-            )
-        })
-        view.findViewById<RecyclerView>(R.id.walks).apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            this.adapter = adapter
-        }
+    @Composable
+    override fun Screen() {
         val repository = (requireActivity().application as TrailApplication).repository
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                repository.walks.collect { walks ->
-                    val filtered = walks.filter(::accepts)
-                    adapter.submitList(filtered)
-                    empty.isVisible = filtered.isEmpty()
-                    view.findViewById<View>(R.id.completed_banner).isVisible =
-                        this@CollectionFragment is CompletedFragment && filtered.isNotEmpty()
-                }
-            }
-        }
+        CollectionScreen(
+            heading,
+            subtitle,
+            emptyText,
+            repository.walks.screenValue(viewLifecycleOwner).filter(::accepts),
+            completed = this is CompletedFragment,
+            onOpen = {
+                findNavController().navigate(
+                    R.id.detailFragment,
+                    bundleOf("walkId" to it.id)
+                )
+            })
     }
 }
 
